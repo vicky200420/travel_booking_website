@@ -1,0 +1,13 @@
+{% load static %}
+<div class="dash-stat-card dash-stat-{{ variant|default:'primary' }}">
+    <div class="dash-stat-icon"><i class="bi {{ icon|default:'bi-circle' }}"></i></div>
+    <div class="dash-stat-body">
+        {% if suffix %}
+        <span class="dash-stat-value" data-counter data-suffix="{{ suffix }}">{{ value }}</span>
+        {% else %}
+        <span class="dash-stat-value" data-counter>{{ value }}</span>
+        {% endif %}
+        <span class="dash-stat-label">{{ label }}</span>
+    </div>
+    <span class="dash-stat-glow"></span>
+</div>

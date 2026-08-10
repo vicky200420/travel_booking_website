@@ -1,0 +1,76 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-toolbar glass-card">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-6 col-md-3">
+            <select name="type" class="form-select">
+                <option value="">All types</option>
+                {% for value, label in type_options %}
+                <option value="{{ value }}" {% if active_type == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="read" class="form-select">
+                <option value="">All</option>
+                <option value="unread" {% if active_read == 'unread' %}selected{% endif %}>Unread</option>
+                <option value="read" {% if active_read == 'read' %}selected{% endif %}>Read</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill rounded-3"><i class="bi bi-funnel me-1"></i>Filter</button>
+            {% if active_type or active_read %}
+            <a href="{% url 'dashboard_notifications' %}" class="btn btn-outline-secondary rounded-3" title="Clear filters"><i class="bi bi-x-lg"></i></a>
+            {% endif %}
+        </div>
+        <div class="col-12 col-md-3">
+            <form method="post" action="{% url 'notifications:notification_mark_all_read' %}" class="d-grid">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary rounded-3">
+                    <i class="bi bi-check2-all me-1"></i>Mark all as read
+                </button>
+            </form>
+        </div>
+    </form>
+</div>
+
+<div class="dash-notif-center" data-notification-list>
+    {% for n in notifications %}
+    <article class="dash-notif-row glass-card{% if not n.is_read %} unread{% endif %}"
+             data-notification-id="{{ n.id }}"
+             data-notification-url="{% url 'notifications:notification_read' n.id %}"
+             data-action-url="{% if n.action_url %}{{ n.action_url }}{% endif %}">
+        <span class="dash-notif-icon" style="color:{{ n.color }};background:{{ n.color }}1A;">
+            <i class="bi {{ n.effective_icon }}"></i>
+        </span>
+        <div class="dash-notif-body">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <strong>{{ n.title }}</strong>
+                <span class="badge dash-badge dash-badge-soft" style="color:{{ n.color }};background:{{ n.color }}14;">{{ n.get_type_display }}</span>
+                {% if not n.is_read %}<span class="dash-notif-dot"></span>{% endif %}
+            </div>
+            {% if n.message %}<p class="text-muted small mb-1">{{ n.message }}</p>{% endif %}
+            <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ n.created_at|date:"M d, Y H:i" }}</small>
+        </div>
+        <div class="dash-notif-actions">
+            <form method="post" action="{% url 'notifications:notification_delete' n.id %}" class="d-inline nc-delete-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-light text-danger rounded-3" title="Delete notification"><i class="bi bi-trash3"></i></button>
+            </form>
+        </div>
+    </article>
+    {% empty %}
+    <div class="dash-empty glass-card">
+        <i class="bi bi-bell-slash"></i>
+        <h6>No notifications found</h6>
+        <p>{% if active_type or active_read %}Try adjusting your filters.{% else %}You'll see booking, payment and travel updates here.{% endif %}</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+    {% include 'components/pagination.html' with page_obj=page_obj %}
+{% endif %}
+{% endblock %}

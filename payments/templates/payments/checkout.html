@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Secure Checkout — {{ booking.booking_id }} | TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'payments/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+<div class="pay-page">
+    <div class="container">
+
+        {% include 'components/page_header.html' with page_icon='bi-shield-lock' page_title='Secure Checkout' page_subtitle='Complete your payment to confirm booking '|add:booking.booking_id page_label='Payments' %}
+
+        {# Progress steps: Booking → Details → Payment → Confirmation #}
+        <div class="pay-steps mb-4">
+            <div class="pay-step done">
+                <div class="pay-step-dot"><i class="bi bi-check-lg"></i></div>
+                <span class="pay-step-label">Booking</span>
+            </div>
+            <div class="pay-step-line done"></div>
+            <div class="pay-step done">
+                <div class="pay-step-dot"><i class="bi bi-check-lg"></i></div>
+                <span class="pay-step-label">Details</span>
+            </div>
+            <div class="pay-step-line done"></div>
+            <div class="pay-step active">
+                <div class="pay-step-dot">3</div>
+                <span class="pay-step-label">Payment</span>
+            </div>
+            <div class="pay-step-line"></div>
+            <div class="pay-step">
+                <div class="pay-step-dot">4</div>
+                <span class="pay-step-label">Confirmed</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            {# ----------------------------------------------------------- LEFT #}
+            <div class="col-lg-7">
+                <div class="pay-glass p-4 p-lg-5 pay-animate">
+                    <h4 class="fw-bold mb-4"><i class="bi bi-credit-card-2-front me-2"></i>Payment Method</h4>
+
+                    {% if gateway == 'razorpay' %}
+                    <div class="pay-gateway selected">
+                        <div class="pay-gateway-icon"><i class="bi bi-wallet2"></i></div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Razorpay <span class="badge bg-warning text-dark ms-1">Test Mode</span></h6>
+                            <small class="text-muted">UPI · Cards · Net Banking · Wallets · EMI</small>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="pay-gateway selected">
+                        <div class="pay-gateway-icon alt"><i class="bi bi-stripe"></i></div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Stripe</h6>
+                            <small class="text-muted">Cards · Apple Pay · Google Pay</small>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="pay-methods mt-4">
+                        <span class="pay-method"><i class="bi bi-phone text-primary"></i>UPI</span>
+                        <span class="pay-method"><i class="bi bi-credit-card text-primary"></i>Credit Card</span>
+                        <span class="pay-method"><i class="bi bi-bank text-primary"></i>Debit Card</span>
+                        <span class="pay-method"><i class="bi bi-building text-primary"></i>Net Banking</span>
+                        <span class="pay-method"><i class="bi bi-wallet text-primary"></i>Wallet</span>
+                        <span class="pay-method"><i class="bi bi-cash-coin text-primary"></i>EMI</span>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" id="pay-button"
+                                class="pay-button"
+                                data-payment-id="{{ payment.id }}"
+                                data-order-id="{{ order_id }}"
+                                data-amount="{{ amount }}"
+                                data-currency="{{ currency }}"
+                                data-key="{{ gateway_key }}"
+                                data-name="Travel Booking"
+                                data-description="Booking {{ booking.booking_id }}"
+                                data-email="{{ user_email }}"
+                                data-phone="{{ user_phone }}"
+                                data-user-name="{{ user_name }}"
+                                data-verify-url="{{ checkout_url }}">
+                            <span class="pay-button-spinner" aria-hidden="true"></span>
+                            <span class="pay-button-label"><i class="bi bi-lock-fill me-2"></i>Pay {{ currency_symbol }}{{ amount }}</span>
+                        </button>
+                        <div class="pay-secure">
+                            <i class="bi bi-shield-check-fill"></i>
+                            <span>256-bit SSL secured · PCI-DSS compliant · Backend signature verification</span>
+                        </div>
+                        <p class="text-muted small text-center mt-2 mb-0">
+                            By proceeding you agree to the terms of service. Refunds are processed to the original payment method.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {# ---------------------------------------------------------- RIGHT #}
+            <div class="col-lg-5">
+                <div class="pay-glass p-4 p-lg-5 pay-animate pay-animate-1">
+
+                    {# Booking summary #}
+                    <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2"></i>Booking Summary</h5>
+                    <div class="pay-summary-row"><span>Booking ID</span><span class="font-monospace">{{ booking.booking_id }}</span></div>
+                    <div class="pay-summary-row"><span>Type</span><span class="text-capitalize">{{ booking.booking_type }}</span></div>
+                    <div class="pay-summary-row"><span>Item</span><span class="text-end">{{ booking.title_display }}</span></div>
+                    <div class="pay-summary-row"><span>Destination</span><span class="text-end">{{ booking.destination_display }}</span></div>
+                    <div class="pay-summary-row"><span>Travel Dates</span><span>{{ booking.travel_start_date|date:"d M" }} – {{ booking.travel_end_date|date:"d M Y" }}</span></div>
+                    <div class="pay-summary-divider"></div>
+
+                    {# Traveler details #}
+                    <h5 class="fw-bold mb-3"><i class="bi bi-people me-2"></i>Traveler Details</h5>
+                    <div class="pay-traveller">
+                        <div class="pay-traveller-avatar"><i class="bi bi-person"></i></div>
+                        <div>
+                            <strong>{{ booking.contact_name }}</strong>
+                            <div class="text-muted small">{{ booking.contact_email }} · {{ booking.contact_phone }}</div>
+                        </div>
+                    </div>
+                    <div class="pay-summary-row"><span>Adults</span><span>{{ booking.adults }}</span></div>
+                    {% if booking.children %}<div class="pay-summary-row"><span>Children</span><span>{{ booking.children }}</span></div>{% endif %}
+                    {% if booking.infants %}<div class="pay-summary-row"><span>Infants</span><span>{{ booking.infants }}</span></div>{% endif %}
+                    <div class="pay-summary-divider"></div>
+
+                    {# Price breakdown #}
+                    <h5 class="fw-bold mb-3"><i class="bi bi-calculator me-2"></i>Price Breakdown</h5>
+                    <div class="pay-summary-row"><span>Base Price</span><span>{{ currency_symbol }}{{ booking.base_price|floatformat:2 }}</span></div>
+                    {% if booking.discount > 0 %}
+                    <div class="pay-summary-row"><span class="pay-discount">Discount</span><span class="pay-discount">− {{ currency_symbol }}{{ booking.discount|floatformat:2 }}</span></div>
+                    {% endif %}
+                    <div class="pay-summary-row"><span>Taxes &amp; Fees</span><span>{{ currency_symbol }}{{ booking.taxes|floatformat:2 }}</span></div>
+                    <div class="pay-summary-row"><span>Service Fee</span><span>{{ currency_symbol }}{{ booking.service_fee|floatformat:2 }}</span></div>
+                    <div class="pay-summary-divider"></div>
+                    <div class="pay-summary-total">
+                        <span class="fw-bold">Grand Total</span>
+                        <span>{{ currency_symbol }}{{ booking.grand_total|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+                <div class="pay-glass p-4 mt-4 pay-animate pay-animate-2">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-question-circle me-1"></i>Need help?</h6>
+                    <p class="small text-muted mb-0">Contact support at <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a> or call us during business hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Processing overlay #}
+<div class="pay-overlay" id="pay-processing-overlay">
+    <div class="pay-overlay-card">
+        <div class="pay-spinner"></div>
+        <h5 class="fw-bold mb-2">Processing Payment</h5>
+        <p class="text-muted mb-0">Please wait while we securely verify your payment…</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="{% static 'payments/js/checkout.js' %}"></script>
+{% endblock %}

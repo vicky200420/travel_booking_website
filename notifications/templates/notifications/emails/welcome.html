@@ -1,0 +1,30 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#9992;{% endblock %}
+{% block hero_title %}Welcome aboard{% if user_first_name %}, {{ user_first_name }}{% endif %}!{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+<div class="section">
+    <p class="section-title">Your journey starts now</p>
+    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="label" width="50%">Account</td>
+            <td class="value" width="50%">{{ user_email }}</td>
+        </tr>
+        <tr>
+            <td class="label">Search</td>
+            <td class="value">Flights, hotels &amp; packages</td>
+        </tr>
+        <tr>
+            <td class="label">Save</td>
+            <td class="value">Track bookings &amp; favorites</td>
+        </tr>
+        <tr>
+            <td class="label">Explore</td>
+            <td class="value">Curated destinations worldwide</td>
+        </tr>
+    </table>
+    <p style="text-align:center;margin:24px 0 0;font-size:13px;color:#64748b;">
+        Don't forget to verify your email to unlock exclusive member deals.
+    </p>
+</div>
+{% endblock %}

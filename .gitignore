@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------------------
+# Environment & secrets
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.python-version
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.coverage.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# ---------------------------------------------------------------------------
+# Django
+# ---------------------------------------------------------------------------
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+# media/ contains user-uploaded files (images, videos) — keep out of git.
+media/
+
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+*.log
+logs/
+*.pid
+
+# ---------------------------------------------------------------------------
+# OS / editors
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------------------
+# Misc generated files
+# ---------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.cache/
+tmp/
+*.tmp
+celerybeat-schedule
+celerybeat.pid
+
+# ---------------------------------------------------------------------------
+# NOTE: The source 'static/' directory (CSS, JS, images, videos) is tracked on
+# purpose. Only the collectstatic output directory 'staticfiles/' is ignored.
+# ---------------------------------------------------------------------------

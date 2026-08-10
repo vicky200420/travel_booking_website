@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice {{ invoice_no }} — TravelBooking</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #0F172A; background: #F8FAFC; padding: 32px; }
+  .invoice { max-width: 760px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+  .invoice-head { background: linear-gradient(135deg, #2563EB, #06B6D4); color: #fff; padding: 28px 36px; display: flex; justify-content: space-between; align-items: center; }
+  .invoice-head h1 { font-size: 1.5rem; }
+  .invoice-head .brand i { margin-right: 8px; }
+  .invoice-meta { padding: 24px 36px; display: flex; justify-content: space-between; border-bottom: 1px dashed #E2E8F0; }
+  .invoice-meta small { color: #64748B; display: block; text-transform: uppercase; letter-spacing: .5px; }
+  .invoice-meta strong { font-size: 1rem; }
+  .invoice-body { padding: 24px 36px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #E2E8F0; font-size: .95rem; }
+  th { background: #F1F5F9; font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; color: #64748B; }
+  .right { text-align: right; }
+  .total-row td { font-weight: 700; font-size: 1.05rem; border-bottom: none; }
+  .grand { background: #F1F5F9; border-radius: 8px; }
+  .invoice-foot { padding: 20px 36px 32px; text-align: center; color: #94A3B8; font-size: .8rem; }
+</style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="invoice-head">
+      <div>
+        <h1><i class="bi bi-airplane-engines"></i>TravelBooking</h1>
+        <small style="opacity:.85">Official Invoice</small>
+      </div>
+      <div class="right">
+        <strong>Invoice #{{ invoice_no }}</strong><br>
+        <small style="opacity:.85">Date: {{ invoice_date|date:"M d, Y" }}</small>
+      </div>
+    </div>
+
+    <div class="invoice-meta">
+      <div>
+        <small>Billed To</small>
+        <strong>{{ billed_to.name }}</strong><br>
+        <span style="font-size:.85rem;color:#64748B">{{ billed_to.email }}<br>{{ billed_to.phone }}</span>
+      </div>
+      <div class="right">
+        <small>Payment Status</small>
+        <strong style="color:#22C55E">{{ payment.get_status_display }}</strong><br>
+        <span style="font-size:.85rem;color:#64748B">{{ payment.get_gateway_display }} • {{ payment.transaction_id }}</span>
+      </div>
+    </div>
+
+    <div class="invoice-body">
+      <h3 style="font-size:1.05rem;margin-bottom:4px">{{ item.label }}</h3>
+      <span style="color:#64748B;font-size:.9rem">
+        {{ item.destination }} &nbsp;•&nbsp; {{ item.dates }} &nbsp;•&nbsp; {{ item.travelers }} traveler{{ item.travelers|pluralize }}
+      </span>
+      <table>
+        <thead>
+          <tr><th>Description</th><th class="right">Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Base fare</td><td class="right">{{ payment.currency }} {{ booking.base_price|floatformat:2 }}</td></tr>
+          <tr><td>Taxes &amp; fees</td><td class="right">{{ payment.currency }} {{ booking.taxes|floatformat:2 }}</td></tr>
+          {% if booking.discount %}
+          <tr><td>Discount</td><td class="right">-{{ payment.currency }} {{ booking.discount|floatformat:2 }}</td></tr>
+          {% endif %}
+          {% if booking.service_fee %}
+          <tr><td>Service fee</td><td class="right">{{ payment.currency }} {{ booking.service_fee|floatformat:2 }}</td></tr>
+          {% endif %}
+          <tr class="total-row grand"><td>Total Paid</td><td class="right">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:20px;font-size:.82rem;color:#64748B">
+        Thank you for travelling with TravelBooking. For any questions about this invoice,
+        contact {{ SUPPORT_EMAIL|default:'support@travelbooking.local' }}.
+      </p>
+    </div>
+
+    <div class="invoice-foot">Generated on {{ invoice_date|date:"M d, Y H:i" }} • TravelBooking</div>
+  </div>
+</body>
+</html>

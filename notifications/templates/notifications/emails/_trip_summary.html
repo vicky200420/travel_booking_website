@@ -1,0 +1,56 @@
+{% comment %}
+Reusable trip summary table for booking / reminder emails.
+Expects booking_context() output (see notifications.utils).
+{% endcomment %}
+<div class="section">
+    <p class="section-title">Booking Summary</p>
+    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="label" width="50%">Booking ID</td>
+            <td class="value" width="50%">{{ booking_id }}</td>
+        </tr>
+        <tr>
+            <td class="label">Type</td>
+            <td class="value">{{ booking_type }}</td>
+        </tr>
+        {% if destination %}
+        <tr>
+            <td class="label">Destination</td>
+            <td class="value">{{ destination }}</td>
+        </tr>
+        {% endif %}
+        {% if item_name %}
+        <tr>
+            <td class="label">Travel Item</td>
+            <td class="value">{{ item_name }}</td>
+        </tr>
+        {% endif %}
+        {% if flight_number %}
+        <tr>
+            <td class="label">Flight</td>
+            <td class="value">{{ airline }} · {{ flight_number }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td class="label">Travel Dates</td>
+            <td class="value">{{ travel_start|date:'M d, Y' }} — {{ travel_end|date:'M d, Y' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Travelers</td>
+            <td class="value">{{ adults }} Adult{% if adults != 1 %}s{% endif %}{% if children %} + {{ children }} Child{% if children != 1 %}ren{% endif %}{% endif %}{% if infants %} + {{ infants }} Infant{% if infants != 1 %}s{% endif %}{% endif %}</td>
+        </tr>
+        <tr>
+            <td class="label">Lead Guest</td>
+            <td class="value">{{ contact_name }}</td>
+        </tr>
+        <tr class="total-row">
+            <td class="label"><strong>Total Paid</strong></td>
+            <td class="value">{{ grand_total }}</td>
+        </tr>
+    </table>
+    {% if booking_url %}
+    <p style="text-align:center;margin:22px 0 0;">
+        <a class="btn" href="{{ booking_url }}">View Booking Details</a>
+    </p>
+    {% endif %}
+</div>

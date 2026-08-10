@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In — TravelBooking{% endblock %}
+
+{% block main_class %}site-main--flush{% endblock %}
+
+{% block content %}
+<div class="login-hero">
+    <div class="login-card slide-up">
+        <div class="text-center mb-4">
+            <div class="brand-icon"><i class="bi bi-airplane-engines"></i></div>
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Sign in to continue your journey</p>
+        </div>
+        <form method="post" novalidate class="needs-validation">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+                {{ form.username }}
+                <label for="{{ form.username.id_for_label }}">Username</label>
+            </div>
+            <div class="form-floating password-wrapper mb-3">
+                {{ form.password }}
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                <button type="button" class="toggle-password" tabindex="-1"><i class="bi bi-eye"></i></button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label small" for="remember">Remember me</label>
+                </div>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-gradient w-100 py-3 btn-ripple"><span>Sign In</span></button>
+        </form>
+        <div class="auth-divider">or continue with</div>
+        <div class="d-flex gap-2 mb-4">
+            <button class="btn-social"><i class="bi bi-google"></i> Google</button>
+            <button class="btn-social"><i class="bi bi-github"></i> GitHub</button>
+        </div>
+        <p class="text-center small mb-0">
+            Don't have an account? <a href="{% url 'register' %}" class="fw-semibold">Create one</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

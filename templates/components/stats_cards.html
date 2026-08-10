@@ -1,0 +1,17 @@
+{% if stats %}
+<div class="row g-3 g-lg-4">
+    {% for stat in stats %}
+    <div class="col-6 col-md-4 col-xl-3">
+        <div class="stat-card {{ stat.variant|default:'primary' }} animate-slide">
+            <div class="stat-card-icon"><i class="bi {{ stat.icon }}"></i></div>
+            <div class="stat-card-value">
+                {% if stat.count %}<span data-counter data-suffix="{{ stat.suffix }}">{{ stat.value }}</span>
+                {% else %}{{ stat.value }}{% endif %}
+                {% if stat.suffix and not stat.count %}<span class="stat-card-suffix">{{ stat.suffix }}</span>{% endif %}
+            </div>
+            <div class="stat-card-label">{{ stat.label }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

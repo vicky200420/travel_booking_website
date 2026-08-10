@@ -1,0 +1,15 @@
+{% if title or description %}
+<div class="empty-state">
+    <div class="empty-state-icon"><i class="bi {{ icon|default:'bi-inbox' }}"></i></div>
+    <h3 class="empty-state-title">{{ title }}</h3>
+    {% if description %}<p class="empty-state-desc">{{ description }}</p>{% endif %}
+    <div class="empty-state-actions">
+        {% if primary_url %}
+            <a href="{{ primary_url }}" class="btn btn-gradient btn-ripple"><span><i class="bi {{ primary_icon|default:'bi-search' }} me-2"></i>{{ primary_label|default:'Get Started' }}</span></a>
+        {% endif %}
+        {% if secondary_url %}
+            <a href="{{ secondary_url }}" class="btn btn-outline-primary"><i class="bi {{ secondary_icon|default:'bi-arrow-left' }} me-2"></i>{{ secondary_label|default:'Go Back' }}</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

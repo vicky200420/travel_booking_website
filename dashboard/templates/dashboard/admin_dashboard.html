@@ -1,0 +1,501 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+
+<script type="application/json" id="admin-analytics-data">{{ analytics_json|safe }}</script>
+
+<!-- ============================================================ HERO -->
+<div class="analytics-hero slide-up">
+    <div class="analytics-hero-text">
+        <span class="dash-hero-eyebrow"><i class="bi bi-bar-chart-fill me-1"></i>Executive Analytics</span>
+        <h2>Business Overview</h2>
+        <p id="analytics-range-label">
+            <i class="bi bi-calendar3 me-1"></i>{{ analytics_window.label }} · live
+        </p>
+    </div>
+    <div class="analytics-hero-actions">
+        <div class="dropdown">
+            <button class="btn btn-soft btn-export-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-download me-2"></i>Export
+            </button>
+            <ul class="dropdown-menu analytics-export-menu">
+                <li class="dropdown-header">Revenue</li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'revenue' 'pdf' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-pdf text-danger"></i> Revenue — PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'revenue' 'xlsx' %}?{{ analytics_qs }}">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Revenue — Excel
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'revenue' 'csv' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-csv text-primary"></i> Revenue — CSV
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-header">Bookings</li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'bookings' 'pdf' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-pdf text-danger"></i> Bookings — PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'bookings' 'xlsx' %}?{{ analytics_qs }}">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Bookings — Excel
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'bookings' 'csv' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-csv text-primary"></i> Bookings — CSV
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-header">Payments</li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'payments' 'pdf' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-pdf text-danger"></i> Payments — PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'payments' 'xlsx' %}?{{ analytics_qs }}">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Payments — Excel
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'payments' 'csv' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-csv text-primary"></i> Payments — CSV
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-header">Users</li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'users' 'pdf' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-pdf text-danger"></i> Users — PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'users' 'xlsx' %}?{{ analytics_qs }}">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Users — Excel
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin_report_export' 'users' 'csv' %}?{{ analytics_qs }}">
+                        <i class="bi bi-filetype-csv text-primary"></i> Users — CSV
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <a href="{% url 'admin:index' %}" class="btn btn-gradient">
+            <i class="bi bi-tools me-2"></i>Admin Tools
+        </a>
+    </div>
+</div>
+
+<!-- ===================================================== GLOBAL SEARCH -->
+<div class="analytics-search glass-card">
+    <div class="analytics-search-field">
+        <i class="bi bi-search"></i>
+        <input type="search" id="analyticsGlobalSearch" class="form-control"
+               placeholder="Search bookings, users, payments, destinations…"
+               autocomplete="off" spellcheck="false">
+        <kbd class="analytics-kbd">/</kbd>
+    </div>
+    <div class="analytics-search-hints">
+        <span>Booking</span><span>User</span><span>Payment</span><span>Destination</span>
+    </div>
+    <div class="analytics-search-results" id="analyticsSearchResults"></div>
+</div>
+
+<!-- ======================================================= STICKY FILTERS -->
+<div class="analytics-filters" id="analyticsFilters">
+    <form method="get" action="{% url 'admin_analytics' %}" class="analytics-filter-form">
+        <div class="analytics-range-pills">
+            <a href="?range=today"   class="analytics-pill{% if analytics_window.preset == 'today' %} active{% endif %}">Today</a>
+            <a href="?range=week"    class="analytics-pill{% if analytics_window.preset == 'week' %} active{% endif %}">This Week</a>
+            <a href="?range=month"   class="analytics-pill{% if analytics_window.preset == 'month' %} active{% endif %}">This Month</a>
+            <a href="?range=6m"      class="analytics-pill{% if analytics_window.preset == '6m' %} active{% endif %}">Last 6 Months</a>
+            <a href="?range=year"    class="analytics-pill{% if analytics_window.preset == 'year' %} active{% endif %}">This Year</a>
+        </div>
+
+        <div class="analytics-custom-range{% if analytics_window.preset == 'custom' %} active{% endif %}">
+            <input type="hidden" name="range" value="custom">
+            <label for="id_from" class="visually-hidden">From</label>
+            <input type="date" id="id_from" name="from" class="form-control form-control-sm"
+                   value="{{ analytics_window.from }}" aria-label="From date">
+            <span class="analytics-range-sep"><i class="bi bi-arrow-right"></i></span>
+            <label for="id_to" class="visually-hidden">To</label>
+            <input type="date" id="id_to" name="to" class="form-control form-control-sm"
+                   value="{{ analytics_window.to }}" aria-label="To date">
+            <button type="submit" class="btn btn-gradient btn-sm">
+                <i class="bi bi-funnel-fill me-1"></i>Apply
+            </button>
+        </div>
+
+        <div class="analytics-filter-meta">
+            <span class="analytics-live-dot"></span>
+            <span class="analytics-live-text">Auto-refresh 30s</span>
+            <button type="button" class="analytics-icon-btn" id="analyticsRefreshBtn" title="Refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- ========================================================== KPI GRID -->
+<div class="analytics-kpi-grid" id="analyticsKpiGrid">
+    {% for kpi in analytics_kpis %}
+    <div class="analytics-kpi-card glass-card variant-{{ kpi.variant }}" style="--kpi-delay: {{ forloop.counter0 }}">
+        <span class="analytics-kpi-glow"></span>
+        <div class="analytics-kpi-icon"><i class="bi {{ kpi.icon }}"></i></div>
+        <div class="analytics-kpi-body">
+            <span class="analytics-kpi-label">{{ kpi.label }}</span>
+            <span class="analytics-kpi-value"
+                  data-counter
+                  data-target="{{ kpi.value }}"
+                  data-prefix="{{ kpi.prefix }}"
+                  data-suffix="{{ kpi.suffix }}"
+                  data-decimals="{{ kpi.decimals }}"
+                  data-meta-key="{{ kpi.key }}">{{ kpi.value_display }}</span>
+            <span class="analytics-kpi-delta {{ kpi.delta_class }}">
+                <i class="bi {{ kpi.delta_icon }}"></i>{{ kpi.delta_display }}
+                <small>vs prev.</small>
+            </span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ============================================================= CHARTS -->
+<div class="analytics-charts">
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Revenue by Month</h6>
+                        <p>Confirmed payments · {{ analytics_window.label }}</p>
+                    </div>
+                    <span class="dash-badge dash-badge-soft"><i class="bi bi-currency-rupee"></i> INR</span>
+                </div>
+                <div class="analytics-chart-body tall">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartRevenue"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-shield-check me-2 text-success"></i>Payment Success vs Failed</h6>
+                        <p>All payments · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body medium">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartPayments"></canvas>
+                </div>
+                <div class="analytics-chart-legend" id="chartPaymentsLegend"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-journal-bookmark-fill me-2 text-violet"></i>Bookings by Month</h6>
+                        <p>Bookings created · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body medium">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartBookings"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-person-plus-fill me-2 text-cyan"></i>User Registration Growth</h6>
+                        <p>New accounts · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body medium">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartGrowth"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-pie-chart-fill me-2 text-purple"></i>Bookings by Category</h6>
+                        <p>Distribution · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body medium">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartCategory"></canvas>
+                </div>
+                <div class="analytics-chart-legend" id="chartCategoryLegend"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-geo-alt-fill me-2 text-amber"></i>Most Popular Destinations</h6>
+                        <p>Confirmed bookings · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body tall">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartDestinations"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-building-fill me-2 text-primary"></i>Top Hotels</h6>
+                        <p>Most booked · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body tall">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartHotels"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="analytics-chart-card glass-card">
+                <div class="analytics-chart-head">
+                    <div>
+                        <h6 class="dash-card-heading"><i class="bi bi-box-seam-fill me-2 text-violet"></i>Top Packages</h6>
+                        <p>Most booked · {{ analytics_window.label }}</p>
+                    </div>
+                </div>
+                <div class="analytics-chart-body short">
+                    <div class="analytics-skeleton-layer"></div>
+                    <canvas id="chartPackages"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================= RECENT ACTIVITY -->
+<div class="analytics-section-head">
+    <div>
+        <h6 class="dash-card-heading"><i class="bi bi-activity me-2"></i>Recent Activity</h6>
+        <p class="analytics-section-sub">Latest across the platform</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="analytics-activity-card glass-card">
+            <div class="analytics-activity-head">
+                <h6><i class="bi bi-people-fill me-2" style="color:var(--primary)"></i>Latest Users</h6>
+                <span class="dash-badge dash-badge-soft">{{ analytics_activity.users|length }}</span>
+            </div>
+            <div class="analytics-activity-list">
+                {% for u in analytics_activity.users %}
+                <div class="analytics-activity-row">
+                    <span class="analytics-avatar">{{ u.initial }}</span>
+                    <div class="analytics-activity-body">
+                        <strong>{{ u.name }}</strong>
+                        <span class="analytics-activity-meta">{{ u.email }}</span>
+                    </div>
+                    <span class="analytics-activity-badge role-{{ u.role|lower }}">{{ u.role }}</span>
+                </div>
+                {% empty %}
+                <div class="analytics-empty"><i class="bi bi-inbox"></i><span>No users yet</span></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="analytics-activity-card glass-card">
+            <div class="analytics-activity-head">
+                <h6><i class="bi bi-journal-bookmark-fill me-2" style="color:#8B5CF6"></i>Latest Bookings</h6>
+                <span class="dash-badge dash-badge-soft">{{ analytics_activity.bookings|length }}</span>
+            </div>
+            <div class="analytics-activity-list">
+                {% for b in analytics_activity.bookings %}
+                <div class="analytics-activity-row">
+                    <span class="analytics-activity-icon type-{{ b.type|lower }}"><i class="bi {% if b.type == 'Flight' %}bi-airplane-fill{% elif b.type == 'Hotel' %}bi-building-fill{% else %}bi-box-seam-fill{% endif %}"></i></span>
+                    <div class="analytics-activity-body">
+                        <strong class="ellipsis">{{ b.title }}</strong>
+                        <span class="analytics-activity-meta">{{ b.destination }} · {{ b.user }}</span>
+                    </div>
+                    <span class="badge badge-{{ b.color }}">{{ b.status }}</span>
+                </div>
+                {% empty %}
+                <div class="analytics-empty"><i class="bi bi-inbox"></i><span>No bookings yet</span></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="analytics-activity-card glass-card">
+            <div class="analytics-activity-head">
+                <h6><i class="bi bi-credit-card-fill me-2" style="color:#06B6D4"></i>Latest Payments</h6>
+                <span class="dash-badge dash-badge-soft">{{ analytics_activity.payments|length }}</span>
+            </div>
+            <div class="analytics-activity-list">
+                {% for p in analytics_activity.payments %}
+                <div class="analytics-activity-row">
+                    <span class="analytics-activity-icon"><i class="bi bi-wallet2"></i></span>
+                    <div class="analytics-activity-body">
+                        <strong>₹{{ p.amount|floatformat:0 }}</strong>
+                        <span class="analytics-activity-meta mono">{{ p.txn|truncatechars:14 }} · {{ p.user }}</span>
+                    </div>
+                    <span class="badge badge-{{ p.color }}">{{ p.status }}</span>
+                </div>
+                {% empty %}
+                <div class="analytics-empty"><i class="bi bi-inbox"></i><span>No payments yet</span></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="analytics-activity-card glass-card">
+            <div class="analytics-activity-head">
+                <h6><i class="bi bi-star-fill me-2" style="color:#F59E0B"></i>Latest Reviews</h6>
+                <span class="dash-badge dash-badge-soft">{{ analytics_activity.reviews|length }}</span>
+            </div>
+            <div class="analytics-activity-list">
+                {% for r in analytics_activity.reviews %}
+                <div class="analytics-activity-row">
+                    <span class="analytics-avatar rating-{{ r.rating }}">{{ r.rating }}<i class="bi bi-star-fill"></i></span>
+                    <div class="analytics-activity-body">
+                        <strong class="ellipsis">{{ r.title }}</strong>
+                        <span class="analytics-activity-meta">{{ r.item }} · {{ r.user }}</span>
+                    </div>
+                    {% if r.approved %}<i class="bi bi-patch-check-fill text-success"></i>{% endif %}
+                </div>
+                {% empty %}
+                <div class="analytics-empty"><i class="bi bi-inbox"></i><span>No reviews yet</span></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== ADMIN TOOLS -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="analytics-tools-card glass-card">
+            <div class="analytics-chart-head mb-3">
+                <div>
+                    <h6 class="dash-card-heading"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Admin Tools</h6>
+                    <p>Jump into Django Admin to manage entities</p>
+                </div>
+            </div>
+            <div class="analytics-tools-grid">
+                <a href="{% url 'admin:accounts_customuser_changelist' %}" class="analytics-tool tool-sky">
+                    <i class="bi bi-people-fill"></i><span>Manage Users</span>
+                </a>
+                <a href="{% url 'admin:flights_flight_changelist' %}" class="analytics-tool tool-cyan">
+                    <i class="bi bi-airplane-fill"></i><span>Manage Flights</span>
+                </a>
+                <a href="{% url 'admin:hotels_hotel_changelist' %}" class="analytics-tool tool-blue">
+                    <i class="bi bi-building-fill"></i><span>Manage Hotels</span>
+                </a>
+                <a href="{% url 'admin:packages_travelpackage_changelist' %}" class="analytics-tool tool-violet">
+                    <i class="bi bi-box-seam-fill"></i><span>Manage Packages</span>
+                </a>
+                <a href="{% url 'admin:reviews_review_changelist' %}" class="analytics-tool tool-amber">
+                    <i class="bi bi-star-fill"></i><span>Manage Reviews</span>
+                </a>
+                <a href="{% url 'admin:payments_payment_changelist' %}" class="analytics-tool tool-green">
+                    <i class="bi bi-credit-card-fill"></i><span>Manage Payments</span>
+                </a>
+                <a href="{% url 'admin:notifications_notification_changelist' %}" class="analytics-tool tool-rose">
+                    <i class="bi bi-bell-fill"></i><span>Manage Notifications</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ REPORTS -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="analytics-tools-card glass-card">
+            <div class="analytics-chart-head mb-3">
+                <div>
+                    <h6 class="dash-card-heading"><i class="bi bi-file-earmark-bar-graph-fill me-2"></i>Reports</h6>
+                    <p>Export a full snapshot of the selected period</p>
+                </div>
+            </div>
+            <div class="analytics-reports-grid">
+                <div class="analytics-report">
+                    <div class="analytics-report-name"><i class="bi bi-cash-stack"></i><span>Revenue Report</span></div>
+                    <div class="analytics-report-formats">
+                        <a href="{% url 'admin_report_export' 'revenue' 'pdf' %}?{{ analytics_qs }}"><i class="bi bi-filetype-pdf"></i>PDF</a>
+                        <a href="{% url 'admin_report_export' 'revenue' 'xlsx' %}?{{ analytics_qs }}"><i class="bi bi-file-earmark-excel"></i>Excel</a>
+                        <a href="{% url 'admin_report_export' 'revenue' 'csv' %}?{{ analytics_qs }}"><i class="bi bi-filetype-csv"></i>CSV</a>
+                    </div>
+                </div>
+                <div class="analytics-report">
+                    <div class="analytics-report-name"><i class="bi bi-journal-bookmark-fill"></i><span>Booking Report</span></div>
+                    <div class="analytics-report-formats">
+                        <a href="{% url 'admin_report_export' 'bookings' 'pdf' %}?{{ analytics_qs }}"><i class="bi bi-filetype-pdf"></i>PDF</a>
+                        <a href="{% url 'admin_report_export' 'bookings' 'xlsx' %}?{{ analytics_qs }}"><i class="bi bi-file-earmark-excel"></i>Excel</a>
+                        <a href="{% url 'admin_report_export' 'bookings' 'csv' %}?{{ analytics_qs }}"><i class="bi bi-filetype-csv"></i>CSV</a>
+                    </div>
+                </div>
+                <div class="analytics-report">
+                    <div class="analytics-report-name"><i class="bi bi-credit-card-fill"></i><span>Payment Report</span></div>
+                    <div class="analytics-report-formats">
+                        <a href="{% url 'admin_report_export' 'payments' 'pdf' %}?{{ analytics_qs }}"><i class="bi bi-filetype-pdf"></i>PDF</a>
+                        <a href="{% url 'admin_report_export' 'payments' 'xlsx' %}?{{ analytics_qs }}"><i class="bi bi-file-earmark-excel"></i>Excel</a>
+                        <a href="{% url 'admin_report_export' 'payments' 'csv' %}?{{ analytics_qs }}"><i class="bi bi-filetype-csv"></i>CSV</a>
+                    </div>
+                </div>
+                <div class="analytics-report">
+                    <div class="analytics-report-name"><i class="bi bi-people-fill"></i><span>User Report</span></div>
+                    <div class="analytics-report-formats">
+                        <a href="{% url 'admin_report_export' 'users' 'pdf' %}?{{ analytics_qs }}"><i class="bi bi-filetype-pdf"></i>PDF</a>
+                        <a href="{% url 'admin_report_export' 'users' 'xlsx' %}?{{ analytics_qs }}"><i class="bi bi-file-earmark-excel"></i>Excel</a>
+                        <a href="{% url 'admin_report_export' 'users' 'csv' %}?{{ analytics_qs }}"><i class="bi bi-filetype-csv"></i>CSV</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'dashboard/css/analytics.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{% static 'dashboard/js/analytics.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Offline — TravelBooking{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="error-wrap anim-fade-up">
+        <div class="error-icon">
+            <i class="bi bi-wifi-off" aria-hidden="true"></i>
+        </div>
+        <h1 class="error-title">You're offline</h1>
+        <p class="error-desc">It looks like you've lost your connection. Reconnect and try again.</p>
+        <div class="error-actions">
+            <a href="javascript:location.reload()" class="btn btn-gradient"><i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>Retry</a>
+            <a href="{% url 'home' %}" class="btn btn-outline-primary"><i class="bi bi-house-door me-1" aria-hidden="true"></i>Back to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

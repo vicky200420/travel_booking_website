@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment History | Travel Booking{% endblock %}
+
+{% block content %}
+{% url 'package_list' as packages_url %}
+{% include 'components/page_header.html' with page_icon='bi-clock-history' page_title='Payment History' page_subtitle='Review all your transactions' page_label='Payments' %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="filter-bar">
+            <form method="get" class="filter-bar-form" id="filter-bar">
+                <div class="filter-bar-grid">
+                    <div class="filter-field">
+                        <label class="form-label" for="id_search">Search</label>
+                        <input type="text" name="search" class="form-control" id="id_search" placeholder="Search transaction or booking ID..." value="{{ request.GET.search }}">
+                    </div>
+                    {% for field in filter_form %}
+                        <div class="filter-field">
+                            {% if field.label %}
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% endif %}
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="filter-bar-actions">
+                    <button type="submit" class="btn btn-gradient btn-ripple"><span><i class="bi bi-funnel me-2"></i>Filter</span></button>
+                    <a href="{% url 'payment_history' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise me-2"></i>Clear</a>
+                </div>
+            </form>
+        </div>
+
+        {% if payments %}
+        <div class="content-card table-card overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-ds table-hover align-middle mb-0 table-cards-on-mobile">
+                    <thead>
+                        <tr>
+                            <th>Transaction</th>
+                            <th>Booking</th>
+                            <th>Method</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td data-label="Transaction">
+                                <span class="font-monospace fw-semibold" style="font-size:0.85rem;">{{ payment.transaction_id }}</span>
+                            </td>
+                            <td data-label="Booking">
+                                <a href="{% url 'booking_detail' payment.booking.booking_id %}" class="font-monospace text-decoration-none">{{ payment.booking.booking_id }}</a>
+                            </td>
+                            <td data-label="Method">
+                                <span class="status-pill {{ payment.gateway }}">{{ payment.get_gateway_display }}</span>
+                            </td>
+                            <td data-label="Amount" class="fw-bold">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</td>
+                            <td data-label="Status">
+                                <span class="badge rounded-pill bg-{{ payment.status_color }}">{{ payment.status }}</span>
+                            </td>
+                            <td data-label="Date" style="font-size:0.85rem;color:#64748B;">
+                                {{ payment.paid_at|default:payment.created_at|date:"d M Y" }}
+                            </td>
+                            <td data-label="">
+                                <div class="d-flex gap-2 justify-content-end align-items-center">
+                                    {% if payment.status == 'Failed' %}
+                                    <form method="post" action="{% url 'payment_retry' payment.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-gradient btn-ripple" title="Retry payment">
+                                            <span><i class="bi bi-arrow-repeat me-1"></i>Retry</span>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <a href="{% url 'payment_invoice' payment.id %}" class="btn btn-sm btn-outline-primary rounded-circle" title="Invoice">
+                                        <i class="bi bi-receipt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+            {% include 'components/pagination.html' with page_obj=page_obj %}
+        {% endif %}
+
+        {% else %}
+        {% include 'components/empty_state.html' with icon='bi-wallet2' title='No Payments Yet' description='Your payment history will appear here once you complete a booking.' primary_url=packages_url primary_icon='bi-box-seam' primary_label='Browse Packages' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

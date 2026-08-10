@@ -1,0 +1,132 @@
+/* ===== Review Card ===== */
+.review-card {
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+}
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+.review-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+.review-image-thumb {
+    width: 80px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.review-image-thumb:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ===== Helpful Button ===== */
+.helpful-btn {
+    transition: 0.25s;
+    border-radius: 50px;
+}
+.helpful-btn.btn-primary {
+    background: #2563EB15;
+    border-color: #2563EB;
+    color: #2563EB;
+}
+.helpful-btn.btn-primary:hover {
+    background: #2563EB;
+    color: #fff;
+}
+
+/* ===== Rating Summary ===== */
+.rating-summary .progress-bar {
+    transition: width 0.8s ease;
+}
+
+/* ===== Review Image Gallery ===== */
+.review-images {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ===== Star Input Selector ===== */
+.star-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-direction: row-reverse;
+}
+.star-selector input { display: none; }
+.star-selector label {
+    font-size: 3rem;
+    cursor: pointer;
+    color: #CBD5E1;
+    transition: 0.2s;
+}
+.star-selector label:hover,
+.star-selector label:hover ~ label,
+.star-selector input:checked ~ label {
+    color: #F59E0B;
+    transform: scale(1.1);
+}
+.star-selector label:hover {
+    transform: scale(1.2);
+}
+
+/* ===== Image Preview Upload ===== */
+.image-preview-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.image-preview-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Rating Badge on Detail Pages ===== */
+.rating-badge-lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+}
+.rating-badge-lg .score {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+.rating-badge-lg .stars {
+    color: #F59E0B;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .review-card .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .star-selector label {
+        font-size: 2.2rem;
+    }
+    .rating-summary {
+        flex-direction: column;
+        align-items: center;
+    }
+}

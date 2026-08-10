@@ -1,0 +1,112 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-toolbar glass-card">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-12 col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+                <input type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="Search by ID or contact…">
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="type" class="form-select">
+                <option value="">All types</option>
+                {% for value, label in type_options %}
+                <option value="{{ value }}" {% if active_type == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="status" class="form-select">
+                <option value="">All statuses</option>
+                {% for value, label in status_options %}
+                <option value="{{ value }}" {% if active_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill rounded-3"><i class="bi bi-funnel me-1"></i>Filter</button>
+            {% if search_query or active_status or active_type %}
+            <a href="{% url 'dashboard_bookings' %}" class="btn btn-outline-secondary rounded-3" title="Clear filters"><i class="bi bi-x-lg"></i></a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="dash-table-card glass-card">
+    <div class="dash-table-head">
+        <h6 class="dash-card-heading mb-0"><i class="bi bi-journal-bookmark-fill me-2"></i>Booking History</h6>
+        <span class="badge dash-badge dash-badge-soft">{{ page_obj.paginator.count }} booking{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dash-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Booking</th>
+                    <th>Type</th>
+                    <th>Destination</th>
+                    <th>Dates</th>
+                    <th class="text-end">Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>
+                        <strong class="dash-mono">{{ booking.booking_id }}</strong>
+                        <small class="d-block text-muted">{{ booking.title_display }}</small>
+                    </td>
+                    <td>
+                        <span class="dash-type-chip dash-type-{{ booking.booking_type|lower }}">
+                            <i class="bi {% if booking.booking_type == 'Flight' %}bi-airplane{% elif booking.booking_type == 'Hotel' %}bi-building{% else %}bi-box-seam{% endif %}"></i>
+                            {{ booking.get_booking_type_display }}
+                        </span>
+                    </td>
+                    <td><i class="bi bi-geo-alt me-1 text-muted"></i>{{ booking.destination_display }}</td>
+                    <td>
+                        <small>{{ booking.travel_start_date|date:"M d, Y" }}<br>
+                        <span class="text-muted">→ {{ booking.travel_end_date|date:"M d, Y" }}</span></small>
+                    </td>
+                    <td class="text-end fw-semibold">₹{{ booking.grand_total|floatformat:0 }}</td>
+                    <td><span class="badge dash-badge badge-{{ booking.status_color }}">{{ booking.status }}</span></td>
+                    <td><span class="badge dash-badge badge-{{ booking.payment_color }}">{{ booking.payment_status }}</span></td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-1">
+                            <a href="{% url 'booking_detail' booking.booking_id %}" class="btn btn-sm btn-light rounded-3" title="View details"><i class="bi bi-eye"></i></a>
+                            {% if booking.can_cancel %}
+                            <form method="post" action="{% url 'booking_cancel' booking.booking_id %}"
+                                  onsubmit="return confirm('Cancel booking {{ booking.booking_id }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-light text-danger rounded-3" title="Cancel booking"><i class="bi bi-x-lg"></i></button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="dash-empty py-4">
+                            <i class="bi bi-journal-x"></i>
+                            <h6>No bookings found</h6>
+                            <p>{% if search_query or active_status or active_type %}Try adjusting your search or filters.{% else %}You haven't made any bookings yet.{% endif %}</p>
+                            <a href="{% url 'hotel_list' %}" class="btn btn-gradient btn-sm">Start exploring</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    {% endif %}
+</div>
+{% endblock %}

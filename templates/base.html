@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Apply persisted theme before CSS paints (prevents flash of wrong theme) #}
+    <script>
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('travelbooking-theme'); } catch (e) {}
+            if (stored === 'dark' || stored === 'light') {
+                document.documentElement.setAttribute('data-theme', stored);
+            }
+        })();
+    </script>
+
+    <title>{% block title %}TravelBooking — Book Flights, Hotels &amp; Holiday Packages{% endblock %}</title>
+
+    {# SEO #}
+    {% block meta %}
+    <meta name="description" content="{% block meta_description %}Book flights, handpicked hotels and curated holiday packages. Compare prices, read verified reviews and plan your perfect trip.{% endblock %}">
+    {% endblock %}
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    {# Open Graph / Twitter #}
+    <meta property="og:site_name" content="{{ SITE_NAME }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}TravelBooking{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Book flights, hotels and holiday packages with TravelBooking.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'icons/icon-512x512.png' %}{% endblock %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}TravelBooking{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Book flights, hotels and holiday packages.{% endblock %}">
+
+    {# PWA #}
+    <meta name="theme-color" content="#2563EB" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0B1220" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="icon" type="image/png" href="{% static 'icons/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    {# Fonts — preconnect + Poppins/Inter #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {# Vendor — Bootstrap 5 + Icons #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    {# Design system — tokens → components → layout → utilities → motion → responsive #}
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    {# App-level chrome styles #}
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'notifications/css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+{# Cinematic background video — opt-in per page via this block (see components/cinematic_background.html) #}
+{% block cinematic_background %}{% endblock %}
+
+{% block site_chrome %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+
+{% block messages %}{% include 'components/messages.html' %}{% endblock %}
+
+<main class="site-main page-anim {% block main_class %}{% endblock %}" id="main-content">
+    {% block content %}{% endblock %}
+</main>
+
+{% block site_footer %}
+    {% include 'components/footer.html' %}
+{% endblock %}
+
+<button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <i class="bi bi-arrow-up" aria-hidden="true"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/theme.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'notifications/js/script.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+{# PWA service worker registration (silently skipped over HTTP/on file://) #}
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('{% static 'sw.js' %}').catch(function () {});
+    });
+}
+</script>
+</body>
+</html>

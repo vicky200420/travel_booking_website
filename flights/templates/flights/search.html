@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Flights — TravelBooking{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Search flights by departure city, destination and date. Compare fares across airlines and cabin classes at TravelBooking.">
+<meta property="og:title" content="Search Flights — TravelBooking">
+<meta property="og:description" content="Find and book flights to your dream destination.">
+{% endblock %}
+
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'flight_search' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'flights/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block cinematic_background %}{% include 'components/cinematic_background.html' %}{% endblock %}
+
+{% block content %}
+{% url 'flight_search' as flight_search_url %}
+{% include 'flights/components/search_form.html' %}
+
+<div class="page-section">
+    {% if search_performed %}
+        {% if flight_list %}
+            {% include 'components/page_header.html' with page_icon='bi-airplane' page_title=results_title page_subtitle=results_subtitle page_label='Flights' page_actions_template='flights/components/search_results_actions.html' %}
+
+            <div class="container">
+                <div class="row g-4" id="flightResults">
+                    {% for flight in flight_list %}
+                        <div class="col-lg-4 col-md-6">
+                            {% include 'flights/components/flight_card.html' %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if flight_list.paginator.num_pages > 1 %}
+                    {% include 'components/pagination.html' with page_obj=flight_list %}
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="container">
+                {% include 'components/empty_state.html' with icon='bi-cloud-sun' title='No flights found' description='Try adjusting your search filters or choose different dates.' primary_url=flight_search_url primary_icon='bi-search' primary_label='Search Again' %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'flights/js/script.js' %}"></script>
+{% endblock %}

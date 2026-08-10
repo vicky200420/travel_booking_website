@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hotel Map — TravelBooking{% endblock %}
+
+{% block extra_css %}
+{% include 'maps/components/map_head.html' %}
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block cinematic_background %}{% include 'components/cinematic_background.html' %}{% endblock %}
+
+{% block content %}
+
+<div id="hotelMapPage" class="map-page" data-prefill-city="{{ prefill_city }}" data-prefill-landmark="{{ prefill_landmark }}" data-prefill-query="{{ prefill_query }}" data-prefill-radius="{{ prefill_radius }}">
+    {{ all_hotels|json_script:"maps-all-hotels" }}
+    {{ landmarks|json_script:"maps-landmarks" }}
+
+    <aside class="map-side-panel glass-card" id="mapSidePanel">
+        <div class="map-panel-header">
+            <div class="d-flex align-items-center gap-2">
+                <span class="map-panel-logo"><i class="bi bi-map"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-0">Explore Hotels</h5>
+                    <small class="text-muted" id="resultCountLabel">Loading…</small>
+                </div>
+            </div>
+            <button class="map-panel-toggle d-lg-none" id="mapPanelToggle" aria-label="Toggle panel">
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+        </div>
+
+        <div class="map-search glass-card">
+            <div class="map-search-field">
+                <label class="form-label" for="mapCityFilter"><i class="bi bi-geo-alt me-1"></i>City</label>
+                <select class="form-select form-select-sm" id="mapCityFilter">
+                    <option value="">All cities</option>
+                    {% for city in city_options %}
+                        <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="map-search-field position-relative">
+                <label class="form-label" for="mapLandmarkFilter"><i class="bi bi-star me-1"></i>Nearby Landmark</label>
+                <div class="map-autocomplete-wrap">
+                    <input type="text" class="form-control form-control-sm" id="mapLandmarkFilter"
+                           placeholder="e.g. Eiffel Tower" autocomplete="off">
+                    <span class="map-autocomplete-clear" id="mapLandmarkClear" title="Clear landmark"><i class="bi bi-x-lg"></i></span>
+                </div>
+                <div class="map-autocomplete-list" id="mapLandmarkAutocomplete"></div>
+            </div>
+
+            <div class="map-search-field">
+                <label class="form-label" for="mapRadiusFilter"><i class="bi bi-broadcast me-1"></i>Distance radius</label>
+                <div class="input-group input-group-sm">
+                    <select class="form-select" id="mapRadiusFilter">
+                        <option value="1">1 km</option>
+                        <option value="2">2 km</option>
+                        <option value="3">3 km</option>
+                        <option value="5" selected>5 km</option>
+                        <option value="10">10 km</option>
+                        <option value="20">20 km</option>
+                        <option value="50">50 km</option>
+                    </select>
+                    <button class="btn btn-outline-primary" id="mapUseLocation" type="button" title="Search near my current location">
+                        <i class="bi bi-crosshair"></i>
+                    </button>
+                </div>
+                <div class="form-text" id="mapRadiusHint">Distance from selected landmark / location</div>
+            </div>
+
+            <div class="map-search-field">
+                <label class="form-label" for="mapQueryFilter"><i class="bi bi-search me-1"></i>Hotel name</label>
+                <input type="text" class="form-control form-control-sm" id="mapQueryFilter" placeholder="Search hotels…">
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-gradient btn-sm flex-fill" id="mapApplyFilter" type="button">
+                    <span><i class="bi bi-funnel me-1"></i>Apply</span>
+                </button>
+                <button class="btn btn-outline-primary btn-sm flex-fill" id="mapResetFilter" type="button">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+
+        <div class="map-panel-tabs">
+            <button class="map-tab active" data-tab="hotels"><i class="bi bi-building me-1"></i>Hotels <span id="tabHotelsCount">0</span></button>
+            <button class="map-tab" data-tab="nearby"><i class="bi bi-compass me-1"></i>Nearby</button>
+        </div>
+
+        <div class="map-panel-body">
+            <div class="map-tab-pane active" data-pane="hotels">
+                <div class="map-hotel-list" id="mapHotelList"></div>
+                <div class="map-empty d-none" id="mapHotelsEmpty">
+                    <i class="bi bi-building-slash"></i>
+                    <h6>No hotels match</h6>
+                    <p class="small text-muted">Try a wider radius or different city.</p>
+                </div>
+            </div>
+            <div class="map-tab-pane" data-pane="nearby">
+                <div class="map-nearby-head d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h6 class="fw-bold mb-0" id="mapNearbyTitle">Select a hotel</h6>
+                        <small class="text-muted" id="mapNearbySubtitle">Choose a marker to see nearby places</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary d-none" id="mapNearbyReload" type="button"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+                <div class="map-nearby-list" id="mapNearbyList">
+                    <div class="map-nearby-placeholder">
+                        <i class="bi bi-hand-index-thumb"></i>
+                        <p class="small text-muted mb-0">Click any hotel marker on the map to explore restaurants, ATMs, metro stations &amp; more.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-panel-footer">
+            <a href="{% url 'hotel_list' %}" class="small"><i class="bi bi-arrow-left me-1"></i>Back to hotel listing</a>
+        </div>
+    </aside>
+
+    <div id="hotelMapCanvas" class="map-canvas">
+        <div class="map-loading-overlay">
+            <div class="map-loading-card glass-card">
+                <span class="spinner-premium"></span>
+                <p class="mb-0 mt-2 fw-semibold">Loading interactive map…</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-floating-card glass-card" id="mapFloatCard">
+        <div class="map-float-close" id="mapFloatClose"><i class="bi bi-x-lg"></i></div>
+        <div class="map-float-image" id="mapFloatImage"></div>
+        <div class="map-float-content">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <h6 class="fw-bold mb-1" id="mapFloatName"></h6>
+                <span class="map-float-rating" id="mapFloatRating"></span>
+            </div>
+            <small class="text-muted" id="mapFloatMeta"></small>
+            <div class="d-flex align-items-center gap-2 mt-1" id="mapFloatPrice"></div>
+            <div class="d-flex gap-2 mt-3">
+                <a class="btn btn-gradient btn-sm flex-fill" id="mapFloatDirections" target="_blank" rel="noopener">
+                    <span><i class="bi bi-navigation me-1"></i>Directions</span>
+                </a>
+                <a class="btn btn-outline-primary btn-sm flex-fill" id="mapFloatView" target="_blank">
+                    <i class="bi bi-eye me-1"></i>View
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% include 'maps/components/map_foot.html' %}
+{% endblock %}

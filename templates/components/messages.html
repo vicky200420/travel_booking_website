@@ -1,0 +1,17 @@
+{% if messages %}
+<div class="toast-container">
+    {% for message in messages %}
+        <div class="toast-notification {{ message.tags }}">
+            <span class="toast-icon">
+                {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill"></i>
+                {% elif message.tags == 'error' %}<i class="bi bi-x-circle-fill"></i>
+                {% elif message.tags == 'warning' %}<i class="bi bi-exclamation-circle-fill"></i>
+                {% else %}<i class="bi bi-info-circle-fill"></i>
+                {% endif %}
+            </span>
+            <span class="toast-body">{{ message }}</span>
+            <button type="button" class="toast-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}

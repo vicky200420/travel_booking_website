@@ -1,0 +1,85 @@
+{% load static %}
+<aside class="dash-sidebar">
+    <div class="dash-brand">
+        <a href="{% url 'dashboard' %}" class="d-flex align-items-center gap-2 text-decoration-none">
+            <span class="dash-brand-icon"><i class="bi bi-airplane-engines"></i></span>
+            <span class="dash-brand-text">TravelBooking</span>
+        </a>
+    </div>
+
+    <div class="dash-user-card">
+        <div class="dash-user-avatar">
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+            {% else %}
+                <span>{{ user.username|first|upper }}</span>
+            {% endif %}
+        </div>
+        <div class="dash-user-meta">
+            <strong>{{ user.get_full_name|default:user.username }}</strong>
+            <span><i class="bi {{ dash_membership.icon }}"></i> {{ dash_membership.label }} Member</span>
+        </div>
+    </div>
+
+    <nav class="dash-nav">
+        <span class="dash-nav-label">Menu</span>
+        <a href="{% url 'dashboard' %}" class="dash-nav-link{% if active_page == 'dashboard' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_bookings' %}" class="dash-nav-link{% if active_page == 'bookings' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-journal-bookmark-fill"></i><span>My Bookings</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_wishlist' %}" class="dash-nav-link{% if active_page == 'wishlist' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-heart-fill"></i><span>Wishlist</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_payments' %}" class="dash-nav-link{% if active_page == 'payments' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-credit-card-fill"></i><span>Payments</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_reviews' %}" class="dash-nav-link{% if active_page == 'reviews' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-star-fill"></i><span>Reviews</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_notifications' %}" class="dash-nav-link{% if active_page == 'notifications' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-bell-fill"></i><span>Notifications</span>
+            {% if unread_notifications %}
+            <span class="dash-nav-badge">{{ unread_notifications }}</span>
+            {% endif %}
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'dashboard_settings' %}" class="dash-nav-link{% if active_page == 'settings' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-gear-fill"></i><span>Settings</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+
+        {% if user.is_staff %}
+        <span class="dash-nav-label mt-3">Admin</span>
+        <a href="{% url 'admin_analytics' %}" class="dash-nav-link{% if active_page == 'admin_analytics' %} active{% endif %}" data-dash-link>
+            <i class="bi bi-graph-up-arrow"></i><span>Analytics</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        <a href="{% url 'admin:index' %}" class="dash-nav-link" data-dash-link>
+            <i class="bi bi-tools"></i><span>Admin Tools</span>
+            <span class="dash-nav-indicator"></span>
+        </a>
+        {% endif %}
+
+        <span class="dash-nav-label mt-3">Explore</span>
+        <a href="{% url 'flights' %}" class="dash-nav-link" data-dash-link><i class="bi bi-airplane"></i><span>Search Flights</span><span class="dash-nav-indicator"></span></a>
+        <a href="{% url 'hotel_list' %}" class="dash-nav-link" data-dash-link><i class="bi bi-building"></i><span>Browse Hotels</span><span class="dash-nav-indicator"></span></a>
+        <a href="{% url 'package_list' %}" class="dash-nav-link" data-dash-link><i class="bi bi-box-seam"></i><span>Explore Packages</span><span class="dash-nav-indicator"></span></a>
+    </nav>
+
+    <div class="dash-sidebar-footer">
+        <div class="dash-points-chip">
+            <i class="bi bi-stars"></i>
+            <span>{{ dash_loyalty_points }} pts</span>
+        </div>
+        <a href="{% url 'logout' %}" class="dash-nav-link dash-logout">
+            <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+        </a>
+    </div>
+</aside>

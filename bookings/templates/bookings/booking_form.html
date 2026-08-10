@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book {{ booking_type }} — TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'bookings/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+
+{% include 'components/page_header.html' with page_icon='bi-bookmark-check' page_title='Book '|add:booking_type page_subtitle='Fill in your details to complete the booking' page_label='Bookings' %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-lg-5">
+                <h4 class="fw-bold mb-4"><i class="bi bi-pencil-square me-2"></i>Booking Details</h4>
+
+                <form method="post" id="bookingForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-people me-2"></i>Travelers
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Adults <small class="text-muted">(12+)</small></label>
+                                {{ form.adults }}
+                                {% if form.adults.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.adults.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Children <small class="text-muted">(2–11)</small></label>
+                                {{ form.children }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Infants <small class="text-muted">(&lt;2)</small></label>
+                                {{ form.infants }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if booking_type == 'Hotel' %}
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="bi bi-calendar me-2"></i>Stay Dates
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Check-in</label>
+                                    {{ form.check_in }}
+                                    {% if form.check_in.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.check_in.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Check-out</label>
+                                    {{ form.check_out }}
+                                    {% if form.check_out.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.check_out.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Rooms</label>
+                                    {{ form.rooms }}
+                                </div>
+                            </div>
+                        </div>
+                    {% elif booking_type == 'Package' %}
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="bi bi-calendar me-2"></i>Travel Dates
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Start Date</label>
+                                    {{ form.travel_start }}
+                                    {% if form.travel_start.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.travel_start.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">End Date</label>
+                                    {{ form.travel_end }}
+                                    {% if form.travel_end.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.travel_end.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-person-badge me-2"></i>Contact Information
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Full Name</label>
+                                {{ form.contact_name }}
+                                {% if form.contact_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.contact_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email</label>
+                                {{ form.contact_email }}
+                                {% if form.contact_email.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.contact_email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone</label>
+                                {{ form.contact_phone }}
+                                {% if form.contact_phone.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.contact_phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Special Requests <small class="text-muted">(optional)</small></label>
+                                {{ form.special_requests }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient btn-lg w-100 btn-ripple">
+                        <span><i class="bi bi-arrow-right-circle me-2"></i>Continue to Review</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-lg-top" style="top:100px;">
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-info-circle me-2"></i>{{ booking_type }} Summary
+                    </h5>
+                    {% include 'bookings/components/price_summary.html' with product=product booking_type=booking_type nights=nights|default:1 %}
+                </div>
+
+                <div class="glass-card p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>Why Book With Us</h5>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-lock-fill text-success fs-5"></i>
+                        <span class="small fw-medium">Secure & encrypted checkout</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-arrow-repeat text-primary fs-5"></i>
+                        <span class="small fw-medium">Free cancellation before travel</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-headset text-accent fs-5"></i>
+                        <span class="small fw-medium">24/7 customer support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'bookings/js/script.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% load static %}
+<div class="price-summary-mini">
+    {% if booking_type == 'Flight' %}
+        <div class="d-flex align-items-center gap-3 mb-3">
+            {% if product.airline_logo %}
+                <img src="{{ product.airline_logo.url }}" alt="{{ product.airline_name }}" style="width:44px;height:44px;object-fit:cover;border-radius:10px;">
+            {% else %}
+                <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.1rem;">{{ product.airline_name|first|upper }}</div>
+            {% endif %}
+            <div>
+                <h6 class="fw-bold mb-0">{{ product.airline_name }} {{ product.flight_number }}</h6>
+                <small class="text-muted">{{ product.departure_city }} → {{ product.destination_city }}</small>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Departure</span>
+            <span class="fw-semibold small">{{ product.departure_date|date:"M d, Y" }} {{ product.departure_time|time:"H:i" }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Cabin</span>
+            <span class="fw-semibold small">{{ product.get_cabin_class_display }}</span>
+        </div>
+    {% elif booking_type == 'Hotel' %}
+        <div class="d-flex align-items-center gap-3 mb-3">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:44px;height:44px;object-fit:cover;border-radius:10px;">
+            {% else %}
+                <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--secondary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;"><i class="bi bi-building"></i></div>
+            {% endif %}
+            <div>
+                <h6 class="fw-bold mb-0">{{ product.name }}</h6>
+                <small class="text-muted">{{ product.city }}, {{ product.country }}</small>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Per night</span>
+            <span class="fw-semibold small">${{ product.discounted_price|floatformat:0 }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Rating</span>
+            <span class="fw-semibold small">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= product.star_rating %}★{% else %}☆{% endif %}
+                {% endfor %}
+            </span>
+        </div>
+    {% elif booking_type == 'Package' %}
+        <div class="d-flex align-items-center gap-3 mb-3">
+            {% if product.cover_image %}
+                <img src="{{ product.cover_image.url }}" alt="{{ product.title }}" style="width:44px;height:44px;object-fit:cover;border-radius:10px;">
+            {% else %}
+                <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--primary-light),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;"><i class="bi bi-box-seam"></i></div>
+            {% endif %}
+            <div>
+                <h6 class="fw-bold mb-0">{{ product.title }}</h6>
+                <small class="text-muted">{{ product.destination }}, {{ product.country }}</small>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Duration</span>
+            <span class="fw-semibold small">{{ product.duration_display }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Per person</span>
+            <span class="fw-semibold small">${{ product.discounted_price|floatformat:0 }}</span>
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <div class="d-flex justify-content-between">
+        <span class="fw-semibold">Price</span>
+        <span class="fw-bold" style="color:var(--primary);">
+            ${{ product.discounted_price|floatformat:0 }}
+            {% if product.has_discount %}
+                <small class="text-muted text-decoration-line-through ms-1">${{ product.price|floatformat:0 }}</small>
+            {% endif %}
+        </span>
+    </div>
+    {% if product.has_discount %}
+        <div class="d-flex justify-content-between mt-1">
+            <span></span>
+            <span class="small text-success">-{{ product.discount_percentage|floatformat:0 }}% off</span>
+        </div>
+    {% endif %}
+</div>

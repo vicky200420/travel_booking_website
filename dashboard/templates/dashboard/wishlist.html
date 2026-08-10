@@ -1,0 +1,71 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-section-head">
+    <div>
+        <h6 class="dash-card-heading mb-1"><i class="bi bi-heart-fill me-2"></i>My Wishlist</h6>
+        <span class="text-muted small">{{ wishlist_total }} saved item{{ wishlist_total|pluralize }}</span>
+    </div>
+</div>
+
+{% if wishlist_items %}
+<div class="row g-4">
+    {% for item in wishlist_items %}
+    <div class="col-sm-6 col-xl-4">
+        <article class="dash-wish-card glass-card" data-wish-item>
+            <a href="{{ item.detail_url }}" class="dash-wish-media">
+                {% if item.cover_image %}
+                    <img src="{{ item.cover_image.url }}" alt="{{ item.title }}">
+                {% else %}
+                    <span class="dash-wish-placeholder">
+                        <i class="bi {% if item.content_type_label == 'Flight' %}bi-airplane{% elif item.content_type_label == 'Hotel' %}bi-building{% else %}bi-box-seam{% endif %}"></i>
+                    </span>
+                {% endif %}
+                <span class="dash-wish-type">{{ item.content_type_label }}</span>
+            </a>
+            <div class="dash-wish-body">
+                <h6 class="dash-wish-title">{{ item.title }}</h6>
+                <span class="dash-wish-loc"><i class="bi bi-geo-alt me-1"></i>{{ item.location_display }}</span>
+                <div class="dash-wish-foot">
+                    <span class="dash-wish-price">
+                        {% if item.price_display %}
+                            <strong>₹{{ item.price_display|floatformat:0 }}</strong>
+                            {% if item.content_type_label == 'Hotel' %}<small>/ night</small>{% endif %}
+                        {% else %}<span class="text-muted small">Unavailable</span>{% endif %}
+                    </span>
+                    <div class="d-flex gap-1">
+                        <form method="post" action="{% url 'dashboard_wishlist_remove' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-light text-danger rounded-3" title="Remove">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                        {% if item.detail_url %}
+                        <a href="{% url 'booking_create' %}?type={% if item.content_type_label == 'Hotel' %}hotel{% elif item.content_type_label == 'Flight' %}flight{% else %}package{% endif %}&id={{ item.object_id }}"
+                           class="btn btn-sm btn-gradient rounded-3"><i class="bi bi-bag-check me-1"></i>Book Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+    {% include 'components/pagination.html' with page_obj=page_obj %}
+{% endif %}
+
+{% else %}
+<div class="dash-empty glass-card">
+    <i class="bi bi-heart"></i>
+    <h6>Your wishlist is empty</h6>
+    <p>Save hotels, flights and holiday packages you love so you can book them later.</p>
+    <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{% url 'hotel_list' %}" class="btn btn-gradient btn-sm"><i class="bi bi-building me-1"></i>Browse hotels</a>
+        <a href="{% url 'package_list' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-box-seam me-1"></i>Explore packages</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,114 @@
+{% load static %}
+<div class="search-sidebar glass-card p-4">
+    <form method="GET" action="{% url 'hotel_search' %}" id="hotelSearchForm" class="needs-validation" novalidate>
+        <div class="mb-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-search me-2"></i>Search Hotels</h5>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-geo-alt me-1"></i>Destination
+                </label>
+                {{ form.destination }}
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">
+                        <i class="bi bi-calendar me-1"></i>Check-in
+                    </label>
+                    {{ form.check_in }}
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">
+                        <i class="bi bi-calendar me-1"></i>Check-out
+                    </label>
+                    {{ form.check_out }}
+                </div>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">
+                        <i class="bi bi-people me-1"></i>Guests
+                    </label>
+                    {{ form.guests }}
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">
+                        <i class="bi bi-door-open me-1"></i>Rooms
+                    </label>
+                    {{ form.rooms }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold mb-0"><i class="bi bi-currency-dollar me-1"></i>Budget</h6>
+                <span class="small text-muted">per night</span>
+            </div>
+            <div class="row g-2">
+                <div class="col-6">
+                    <label class="form-label small">Min</label>
+                    {{ form.min_price }}
+                </div>
+                <div class="col-6">
+                    <label class="form-label small">Max</label>
+                    {{ form.max_price }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h6 class="fw-bold mb-2"><i class="bi bi-star me-1"></i>Star Rating</h6>
+            <div class="star-rating-filter d-flex gap-1 flex-wrap">
+                {% for i in "54321"|make_list %}
+                    <label class="star-option">
+                        <input type="radio" name="star_rating" value="{{ i }}"
+                               {% if form.star_rating.value|stringformat:"s" == i|stringformat:"s" %}checked{% endif %}>
+                        <span class="star-label">{{ i }}<i class="bi bi-star-fill ms-1"></i></span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h6 class="fw-bold mb-2"><i class="bi bi-grid me-1"></i>Amenities</h6>
+            <div class="amenities-filter">
+                {% for field in form %}
+                    {% if field.name in 'wifi,pool,parking,spa,gym,restaurant,ac,breakfast,pet_friendly' %}
+                        <div class="form-check mb-2">
+                            {{ field }}
+                            <label class="form-check-label small" for="{{ field.id_for_label }}">
+                                {% if field.name == 'wifi' %}<i class="bi bi-wifi me-1"></i>
+                                {% elif field.name == 'pool' %}<i class="bi bi-water me-1"></i>
+                                {% elif field.name == 'parking' %}<i class="bi bi-car-front me-1"></i>
+                                {% elif field.name == 'spa' %}<i class="bi bi-flower1 me-1"></i>
+                                {% elif field.name == 'gym' %}<i class="bi bi-dumbbell me-1"></i>
+                                {% elif field.name == 'restaurant' %}<i class="bi bi-cup-straw me-1"></i>
+                                {% elif field.name == 'ac' %}<i class="bi bi-snow me-1"></i>
+                                {% elif field.name == 'breakfast' %}<i class="bi bi-cup-hot me-1"></i>
+                                {% elif field.name == 'pet_friendly' %}<i class="bi bi-emoji-smile me-1"></i>
+                                {% endif %}
+                                {{ field.label }}
+                            </label>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="form-check">
+                {{ form.featured }}
+                <label class="form-check-label fw-medium" for="{{ form.featured.id_for_label }}">
+                    <i class="bi bi-star-fill text-warning me-1"></i>Featured Hotels Only
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-gradient w-100 btn-ripple mb-2">
+            <span><i class="bi bi-search me-2"></i>Search Hotels</span>
+        </button>
+        <a href="{% url 'hotel_list' %}" class="btn btn-outline-primary w-100 btn-ripple">
+            <span><i class="bi bi-x-circle me-2"></i>Clear Filters</span>
+        </a>
+    </form>
+</div>

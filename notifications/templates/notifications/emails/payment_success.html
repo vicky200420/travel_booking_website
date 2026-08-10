@@ -1,0 +1,7 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#128179;{% endblock %}
+{% block hero_title %}Payment received{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+{% include 'notifications/emails/_trip_summary.html' %}
+{% endblock %}

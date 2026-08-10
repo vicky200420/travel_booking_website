@@ -1,0 +1,366 @@
+/* ==========================================================================
+   TRAVEL BOOKING — DESIGN SYSTEM · ANIMATIONS
+   --------------------------------------------------------------------------
+   All keyframes and motion primitives live here so pages never define their
+   own animation. Respects prefers-reduced-motion globally (see end of file).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. KEYFRAMES
+   -------------------------------------------------------------------------- */
+
+/* Spinners / progress */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes progress-slide {
+  from { width: 8%; }
+  to { width: 100%; }
+}
+
+@keyframes indeterminate {
+  0% { left: -40%; width: 40%; }
+  50% { width: 60%; }
+  100% { left: 100%; width: 40%; }
+}
+
+/* Entrance */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoom-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes zoom-out {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Exit */
+@keyframes slide-out-right {
+  to { transform: translateX(110%); opacity: 0; }
+}
+
+@keyframes slide-out-up {
+  to { transform: translateY(-24px); opacity: 0; }
+}
+
+/* Ambient / attention */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(3deg); }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 var(--pulse-color, rgba(37, 99, 235, 0.5)); }
+  70% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(9deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes gradient-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-hint {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+@keyframes counter-sweep {
+  from { background-position: 0 0; }
+  to { background-position: 100% 0; }
+}
+
+@keyframes page-transition {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ambient glow drift for the cinematic background overlay (subtle) */
+@keyframes cinematic-glow-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  to { transform: translate3d(1.5%, 1%, 0) scale(1.08); }
+}
+
+/* --------------------------------------------------------------------------
+   2. MOTION PRIMITIVES (utility classes)
+   -------------------------------------------------------------------------- */
+.anim-fade { animation: fade-in 0.6s ease-out both; }
+.anim-fade-up { animation: fade-in-up 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-fade-down { animation: fade-in-down 0.45s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-fade-left { animation: fade-in-left 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-fade-right { animation: fade-in-right 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-zoom-in { animation: zoom-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.anim-pop { animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.anim-float { animation: float 6s ease-in-out infinite; }
+.anim-float-soft { animation: float-soft 4s ease-in-out infinite; }
+
+/* Staggered entrances */
+.anim-delay-1 { animation-delay: 0.1s; }
+.anim-delay-2 { animation-delay: 0.2s; }
+.anim-delay-3 { animation-delay: 0.3s; }
+.anim-delay-4 { animation-delay: 0.4s; }
+.anim-delay-5 { animation-delay: 0.5s; }
+
+/* Page-level transition applied to <main> */
+.page-anim { animation: page-transition 0.45s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+/* --------------------------------------------------------------------------
+   3. HOVER MICRO-INTERACTIONS
+   -------------------------------------------------------------------------- */
+.hover-lift {
+  transition: transform var(--transition), box-shadow var(--transition),
+              border-color var(--transition), background var(--transition);
+  will-change: transform;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-zoom {
+  transition: transform 0.5s var(--ease-out);
+  will-change: transform;
+}
+.hover-zoom:hover { transform: scale(1.08); }
+
+.hover-grow { transition: transform var(--transition-fast); }
+.hover-grow:hover { transform: scale(1.03); }
+
+.hover-bright { transition: filter var(--transition-fast); }
+.hover-bright:hover { filter: brightness(1.08); }
+
+.hover-sink { transition: transform var(--transition-fast); }
+.hover-sink:hover { transform: translateY(2px); }
+
+/* Image zoom inside a card on card hover */
+.card-media {
+  position: relative;
+  overflow: hidden;
+}
+.card-media img {
+  transition: transform 0.6s var(--ease-out);
+  will-change: transform;
+}
+.card-media:hover img { transform: scale(1.08); }
+
+/* --------------------------------------------------------------------------
+   4. LOADING · SKELETON · SPINNERS · PROGRESS
+   -------------------------------------------------------------------------- */
+.skeleton {
+  position: relative;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.skeleton-line { height: 14px; border-radius: 6px; margin-bottom: 10px; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-80 { width: 80%; }
+.skeleton-line.h-32 { height: 32px; }
+.skeleton-line.h-40 { height: 40px; }
+.skeleton-line.h-80 { height: 80px; }
+.skeleton-circle { border-radius: 50%; }
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.spinner-lg { width: 40px; height: 40px; border-width: 4px; }
+
+/* Indeterminate progress bar */
+.progress-indeterminate {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: 4px;
+}
+.progress-indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--gradient);
+  animation: indeterminate 1.4s var(--ease-in-out) infinite;
+}
+
+/* Loader overlay (buttons / submits) */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.82;
+}
+.btn-loading > * { visibility: hidden; }
+.btn-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTON RIPPLE
+   -------------------------------------------------------------------------- */
+.btn-ripple { position: relative; overflow: hidden; }
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. SCROLL REVEAL (main.js toggles .is-revealed)
+   -------------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. COUNTER SWEEP (number counters)
+   -------------------------------------------------------------------------- */
+.counter-sweep {
+  background: linear-gradient(90deg, var(--text), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: counter-sweep 1.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   8. REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  /* Cinema: static poster frame instead of moving video even without JS */
+  .cinematic-bg__video { display: none !important; }
+  .cinematic-bg__glow { animation: none !important; opacity: 0.5; }
+  .cinematic-bg__video { transform: none !important; }
+}

@@ -1,0 +1,47 @@
+{% load static review_extras %}
+
+<div class="glass-card p-4 p-lg-5 mb-5">
+    <h4 class="fw-bold mb-4"><i class="bi bi-star-fill me-2"></i>Guest Reviews</h4>
+
+    {% if total_reviews > 0 %}
+        {% include 'reviews/components/rating_summary.html' with avg_rating=avg_rating total_reviews=total_reviews stats=stats %}
+
+        <div id="reviewsContainer" class="mt-4">
+            <div class="row g-4">
+                {% for review in reviews %}
+                    <div class="col-md-6">
+                        {% include 'reviews/components/review_card.html' with show_actions=False %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if reviews.count < total_reviews %}
+            <div class="text-center mt-4">
+                <button id="loadMoreReviews" class="btn btn-outline-primary rounded-pill px-5"
+                        data-url="{{ reviews_json_url }}">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Load All Reviews ({{ total_reviews }})
+                </button>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-chat-square-text" style="font-size:2.5rem;color:#CBD5E1;"></i>
+            <p class="text-muted mt-3 mb-0">No reviews yet. Be the first to review!</p>
+        </div>
+    {% endif %}
+
+    {% if existing_review_id %}
+        <div class="text-center mt-4 pt-4 border-top">
+            <a href="{% url 'review_edit' existing_review_id %}" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-pencil me-2"></i>Edit Your Review
+            </a>
+        </div>
+    {% elif can_review and review_booking_id %}
+        <div class="text-center mt-4 pt-4 border-top">
+            <a href="{% url 'review_create' %}?booking={{ review_booking_id }}" class="btn btn-primary rounded-pill px-5 gradient-btn">
+                <i class="bi bi-pencil-square me-2"></i>Write a Review
+            </a>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,54 @@
+{% load static %}
+<li class="nav-item position-relative notification-bell-wrap">
+    <a class="nav-link notification-bell" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+        <i class="bi bi-bell"></i>
+        <span class="notification-badge{% if not unread_notifications %} d-none{% endif %}" data-unread-badge data-unread-count="{{ unread_notifications }}" data-url="{% url 'notifications:notification_unread_count' %}">{{ unread_notifications }}</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg border-0 rounded-4 mt-2">
+        <li class="notification-head">
+            <span class="fw-bold fs-6"><i class="bi bi-bell me-1"></i>Notifications</span>
+            {% if unread_notifications %}
+            <form method="post" action="{% url 'notifications:notification_mark_all_read' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-link p-0 text-primary">Mark all read</button>
+            </form>
+            {% endif %}
+        </li>
+        <li><hr class="dropdown-divider m-0"></li>
+
+        <div class="notification-scroll">
+            {% for n in recent_notifications %}
+            <li>
+                <a class="dropdown-item notification-item{% if not n.is_read %} unread{% endif %}"
+                   href="{% if n.action_url %}{{ n.action_url }}{% else %}{% url 'notifications:notification_center' %}{% endif %}"
+                   data-notification-id="{{ n.id }}"
+                   data-notification-url="{% url 'notifications:notification_read' n.id %}">
+                    <span class="notification-icon" style="color:{{ n.color }};background:{{ n.color }}1A;">
+                        <i class="bi {{ n.icon }}"></i>
+                    </span>
+                    <span class="notification-text">
+                        <span class="notification-title">{{ n.title }}</span>
+                        <span class="notification-msg">{{ n.message|truncatechars:70 }}</span>
+                        <span class="notification-time"><i class="bi bi-clock me-1"></i>{{ n.created_at|timesince }} ago</span>
+                    </span>
+                    {% if not n.is_read %}<span class="notification-dot"></span>{% endif %}
+                </a>
+            </li>
+            {% empty %}
+            <li>
+                <div class="notification-empty py-4 text-center">
+                    <i class="bi bi-check2-all d-block mb-2" style="font-size:2rem;color:#94a3b8;"></i>
+                    <span class="text-muted small">You're all caught up!</span>
+                </div>
+            </li>
+            {% endfor %}
+        </div>
+
+        <li><hr class="dropdown-divider m-0"></li>
+        <li class="text-center py-2 px-3">
+            <a href="{% url 'notifications:notification_center' %}" class="btn btn-sm btn-outline-primary w-100 rounded-3">
+                <i class="bi bi-list-ul me-1"></i>View all notifications
+            </a>
+        </li>
+    </ul>
+</li>

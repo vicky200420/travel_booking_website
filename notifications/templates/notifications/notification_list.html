@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications — TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'notifications/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+{% if unread_total %}
+    {% include 'components/page_header.html' with page_icon='bi-bell' page_title='Notification Center' page_subtitle='{{ unread_total }} unread notification{{ unread_total|pluralize }}' page_label='Notifications' %}
+{% else %}
+    {% include 'components/page_header.html' with page_icon='bi-bell' page_title='Notification Center' page_subtitle="You're all caught up" page_label='Notifications' %}
+{% endif %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="filter-bar mb-4">
+                    <form method="get" action="{% url 'notifications:notification_center' %}" class="filter-bar-form" id="filter-bar">
+                        <div class="filter-bar-grid">
+                            <div class="filter-field">
+                                <label class="form-label" for="id_q">Search</label>
+                                <input type="search" name="q" id="id_q" value="{{ search_query }}" class="form-control" placeholder="Search notifications…">
+                            </div>
+                            <div class="filter-field">
+                                <label class="form-label" for="id_type">Type</label>
+                                <select name="type" id="id_type" class="form-select">
+                                    <option value="">All types</option>
+                                    {% for value, label in type_options %}
+                                    <option value="{{ value }}" {% if active_type == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="filter-field">
+                                <label class="form-label" for="id_read">Status</label>
+                                <select name="read" id="id_read" class="form-select">
+                                    <option value="">All</option>
+                                    <option value="unread" {% if active_read == 'unread' %}selected{% endif %}>Unread</option>
+                                    <option value="read" {% if active_read == 'read' %}selected{% endif %}>Read</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-bar-actions">
+                            <button type="submit" class="btn btn-gradient btn-ripple"><span><i class="bi bi-search me-2"></i>Filter</span></button>
+                            {% if search_query or active_type or active_read %}
+                            <a href="{% url 'notifications:notification_center' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise me-2"></i>Clear</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+
+                <div class="nc-list" data-notification-list>
+                {% for n in notifications %}
+                <article class="nc-item glass-card{% if not n.is_read %} nc-item-unread{% endif %}"
+                         data-notification-id="{{ n.id }}"
+                         data-notification-url="{% url 'notifications:notification_read' n.id %}"
+                         data-action-url="{% if n.action_url %}{{ n.action_url }}{% endif %}">
+                    <span class="nc-item-icon" style="color:{{ n.color }};background:{{ n.color }}1A;">
+                        <i class="bi {{ n.effective_icon }}"></i>
+                    </span>
+                    <div class="nc-item-body">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h6 class="fw-bold mb-0">{{ n.title }}</h6>
+                            <span class="nc-type-pill" style="color:{{ n.color }};background:{{ n.color }}14;">{{ n.get_type_display }}</span>
+                            {% if not n.is_read %}<span class="nc-unread-dot" title="Unread"></span>{% endif %}
+                        </div>
+                        {% if n.message %}<p class="nc-item-msg text-muted mb-1">{{ n.message }}</p>{% endif %}
+                        <small class="nc-item-time text-muted"><i class="bi bi-clock me-1"></i>{{ n.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <div class="nc-item-actions">
+                        <form method="post" action="{% url 'notifications:notification_delete' n.id %}" class="d-inline nc-delete-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-icon text-muted" title="Delete notification"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="nc-empty glass-card text-center py-5">
+                    <i class="bi bi-bell-slash d-block mb-3" style="font-size:3rem;color:#94a3b8;"></i>
+                    <h6 class="fw-bold">No notifications found</h6>
+                    <p class="text-muted small mb-0">
+                        {% if search_query or active_type or active_read %}
+                            Try adjusting your search or filters.
+                        {% else %}
+                            You'll see updates about your bookings and payments here.
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+                {% include 'components/pagination.html' with page_obj=page_obj %}
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="nc-side glass-card p-4 mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-2"></i>Quick Actions</h6>
+                <div class="d-grid gap-2">
+                    <form method="post" action="{% url 'notifications:notification_mark_all_read' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary w-100 rounded-3">
+                            <i class="bi bi-check2-all me-1"></i>Mark all as read
+                        </button>
+                    </form>
+                    <a href="{% url 'booking_history' %}" class="btn btn-outline-secondary w-100 rounded-3">
+                        <i class="bi bi-journal-bookmark me-1"></i>My Bookings
+                    </a>
+                    <a href="{% url 'payment_history' %}" class="btn btn-outline-secondary w-100 rounded-3">
+                        <i class="bi bi-credit-card me-1"></i>Payment History
+                    </a>
+                </div>
+            </div>
+            <div class="nc-side glass-card p-4">
+                <h6 class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>About Notifications</h6>
+                <p class="text-muted small mb-0">
+                    You'll automatically receive updates for bookings, payments, refunds and
+                    travel reminders. Promotions from our partners may occasionally appear here too.
+                </p>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'notifications/js/script.js' %}"></script>
+{% endblock %}

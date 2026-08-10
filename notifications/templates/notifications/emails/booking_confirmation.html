@@ -1,0 +1,14 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#10004;&#65039;{% endblock %}
+{% block hero_title %}Booking confirmed!{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+{% include 'notifications/emails/_trip_summary.html' %}
+<div class="divider"></div>
+<div class="section">
+    <p style="font-size:13px;color:#64748b;margin:0;">
+        A confirmation has been added to your dashboard. Keep an eye on your inbox —
+        we'll send travel reminders before your departure.
+    </p>
+</div>
+{% endblock %}

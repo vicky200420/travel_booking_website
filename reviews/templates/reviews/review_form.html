@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Edit Review{% else %}Write a Review{% endif %} | TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'reviews/css/style.css' %}">
+<style>
+    .star-selector { display: flex; gap: 8px; justify-content: center; flex-direction: row-reverse; }
+    .star-selector input { display: none; }
+    .star-selector label { font-size: 3rem; cursor: pointer; color: #CBD5E1; transition: 0.2s; }
+    .star-selector label:hover,
+    .star-selector label:hover ~ label,
+    .star-selector input:checked ~ label { color: #F59E0B; transform: scale(1.1); }
+    .star-selector label:hover { transform: scale(1.2); }
+    .glass-input { background: rgba(255,255,255,0.7); border: 1.5px solid #E2E8F0; border-radius: 12px; transition: 0.25s; }
+    .glass-input:focus { border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37,99,235,0.12); background: #fff; }
+    .image-preview-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .image-preview-item { position: relative; width: 100px; height: 100px; border-radius: 12px; overflow: hidden; }
+    .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% url 'my_reviews' as my_reviews_url %}
+<div class="page-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% if is_edit %}
+                    {% include 'components/breadcrumbs.html' with back_label='My Reviews' back_url=my_reviews_url page_label='Edit Review' %}
+                {% else %}
+                    {% include 'components/breadcrumbs.html' with back_label='My Reviews' back_url=my_reviews_url page_label='Write a Review' %}
+                {% endif %}
+
+                <div class="card border-0 rounded-4 overflow-hidden" style="background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+                <div class="p-4 p-lg-5">
+                    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                        <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#E0E7FF,#C7D2FE);display:flex;align-items:center;justify-content:center;font-size:1.6rem;">
+                            {% if booking.booking_type == 'Hotel' %}
+                                <i class="bi bi-building" style="color:#4F46E5;"></i>
+                            {% else %}
+                                <i class="bi bi-box-seam" style="color:#059669;"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">{{ product.name|default:product.title }}</h5>
+                            <span class="badge rounded-pill bg-{{ booking.status_color }}">{{ booking.status }}</span>
+                            <span class="text-muted small ms-2">{{ booking.booking_id }}</span>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" id="reviewForm">
+                        {% csrf_token %}
+
+                        <div class="mb-4 text-center">
+                            <label class="fw-semibold d-block mb-2 fs-5">Your Rating</label>
+                            <div class="star-selector" id="starSelector">
+                                {% for i in "54321"|make_list %}
+                                    <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}"
+                                        {% if form.rating.value|stringformat:"s" == i %}checked{% endif %} required>
+                                    <label for="star{{ i }}" title="{{ i }} Star{{ i|pluralize }}">★</label>
+                                {% endfor %}
+                            </div>
+                            {% if form.rating.errors %}
+                                <div class="text-danger small mt-1">{{ form.rating.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-1">{{ form.title.label }}</label>
+                            {{ form.title }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-1">{{ form.review_text.label }}</label>
+                            {{ form.review_text }}
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Minimum 20 characters</small>
+                                <small class="text-muted" id="charCount">0 characters</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-semibold mb-1">{{ form.images.label }}</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" name="images" multiple accept="image/*" class="form-control glass-input" id="imageInput">
+                            </div>
+                            <div class="image-preview-grid" id="imagePreview"></div>
+                            <small class="text-muted">Upload photos from your trip (optional)</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill gradient-btn">
+                                <i class="bi {% if is_edit %}bi-check-circle{% else %}bi-send{% endif %} me-2"></i>
+                                {% if is_edit %}Update Review{% else %}Submit Review{% endif %}
+                            </button>
+                            <a href="{% if is_edit %}{% url 'my_reviews' %}{% else %}{% url 'booking_detail' booking.booking_id %}{% endif %}"
+                               class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'reviews/js/script.js' %}"></script>
+<script>
+document.getElementById('imageInput')?.addEventListener('change', function(e) {
+    const container = document.getElementById('imagePreview');
+    container.innerHTML = '';
+    Array.from(e.target.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const div = document.createElement('div');
+            div.className = 'image-preview-item';
+            div.innerHTML = '<img src="' + ev.target.result + '" alt="Preview">';
+            container.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+
+document.querySelector('[name="review_text"]')?.addEventListener('input', function() {
+    document.getElementById('charCount').textContent = this.value.length + ' characters';
+});
+</script>
+{% endblock %}

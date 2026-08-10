@@ -1,0 +1,85 @@
+/* ==========================================================================
+   TRAVEL BOOKING — DESIGN SYSTEM · UTILITIES
+   Spacing scale, layout helpers, typography helpers, scrollbar.
+   Motion + skeleton helpers now live in animations.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SPACING SCALE — 8 · 16 · 24 · 32 · 48 · 64
+   -------------------------------------------------------------------------- */
+.u-m-1 { margin: var(--space-1); }   .u-m-2 { margin: var(--space-2); }
+.u-m-3 { margin: var(--space-3); }   .u-m-4 { margin: var(--space-4); }
+.u-m-5 { margin: var(--space-5); }   .u-m-6 { margin: var(--space-6); }
+
+.u-mt-1 { margin-top: var(--space-1); }   .u-mt-2 { margin-top: var(--space-2); }
+.u-mt-3 { margin-top: var(--space-3); }   .u-mt-4 { margin-top: var(--space-4); }
+.u-mt-5 { margin-top: var(--space-5); }   .u-mt-6 { margin-top: var(--space-6); }
+
+.u-mb-1 { margin-bottom: var(--space-1); } .u-mb-2 { margin-bottom: var(--space-2); }
+.u-mb-3 { margin-bottom: var(--space-3); } .u-mb-4 { margin-bottom: var(--space-4); }
+.u-mb-5 { margin-bottom: var(--space-5); } .u-mb-6 { margin-bottom: var(--space-6); }
+
+.u-mx-1 { margin-left: var(--space-1); margin-right: var(--space-1); }
+.u-mx-2 { margin-left: var(--space-2); margin-right: var(--space-2); }
+.u-mx-3 { margin-left: var(--space-3); margin-right: var(--space-3); }
+.u-mx-4 { margin-left: var(--space-4); margin-right: var(--space-4); }
+.u-mx-auto { margin-left: auto; margin-right: auto; }
+
+.u-p-1 { padding: var(--space-1); }   .u-p-2 { padding: var(--space-2); }
+.u-p-3 { padding: var(--space-3); }   .u-p-4 { padding: var(--space-4); }
+.u-p-5 { padding: var(--space-5); }   .u-p-6 { padding: var(--space-6); }
+
+.u-pt-3 { padding-top: var(--space-3); } .u-pt-4 { padding-top: var(--space-4); }
+.u-pb-3 { padding-bottom: var(--space-3); } .u-pb-4 { padding-bottom: var(--space-4); }
+
+.u-gap-1 { gap: var(--space-1); } .u-gap-2 { gap: var(--space-2); }
+.u-gap-3 { gap: var(--space-3); } .u-gap-4 { gap: var(--space-4); }
+
+/* --------------------------------------------------------------------------
+   SHADOW HELPERS
+   -------------------------------------------------------------------------- */
+.shadow-card { box-shadow: var(--shadow-card) !important; }
+.shadow-soft { box-shadow: var(--shadow) !important; }
+.shadow-md-ds { box-shadow: var(--shadow-md) !important; }
+.shadow-lg-ds { box-shadow: var(--shadow-lg) !important; }
+
+/* --------------------------------------------------------------------------
+   MOTION — backward-compatible aliases (canonical ones live in animations.css)
+   -------------------------------------------------------------------------- */
+.animate-fade { animation: fade-in 0.6s ease-out both; }
+.animate-slide { animation: fade-in-up 0.55s ease-out both; }
+.animate-slide-delay-1 { animation: fade-in-up 0.55s ease-out 0.1s both; }
+.animate-slide-delay-2 { animation: fade-in-up 0.55s ease-out 0.2s both; }
+.animate-slide-delay-3 { animation: fade-in-up 0.55s ease-out 0.3s both; }
+
+.fade-in { animation: fade-in 0.6s ease-out; }
+.slide-up { animation: fade-in-up 0.5s ease-out; }
+
+.hover-lift { transition: transform var(--transition), box-shadow var(--transition); }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+/* --------------------------------------------------------------------------
+   TEXT HELPERS
+   -------------------------------------------------------------------------- */
+.text-gradient {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.no-wrap { white-space: nowrap; }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Bootstrap color overrides bound to theme tokens */
+.text-muted { color: var(--text-muted) !important; }
+.bg-surface { background-color: var(--surface) !important; }
+
+/* --------------------------------------------------------------------------
+   SCROLLBAR
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.35); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.55); }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice {{ invoice_no }} — {{ SITE_NAME }}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'Inter', Arial, sans-serif; color: #0F172A; background: #F1F5F9; padding: 32px; -webkit-print-color-adjust: exact; }
+  .invoice { max-width: 780px; margin: 0 auto; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 12px 40px rgba(15,23,42,.12); }
+  .invoice-head { background: linear-gradient(135deg, #2563EB, #06B6D4); color: #fff; padding: 30px 38px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .invoice-head .brand { display: flex; align-items: center; gap: 10px; }
+  .invoice-head .brand i { font-size: 1.6rem; }
+  .invoice-head h1 { font-size: 1.35rem; letter-spacing: .3px; }
+  .invoice-head small { opacity: .82; display: block; margin-top: 2px; }
+  .invoice-head .right { text-align: right; }
+  .invoice-head .right strong { font-size: 1.05rem; }
+  .invoice-head .right small { opacity: .82; }
+  .invoice-badge { display: inline-block; margin-top: 8px; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.18); font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .invoice-meta { padding: 26px 38px; display: flex; justify-content: space-between; gap: 20px; border-bottom: 1px dashed #E2E8F0; flex-wrap: wrap; }
+  .invoice-meta block small, .invoice-meta .label { color: #64748B; display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+  .invoice-meta block strong { font-size: 1rem; }
+  .invoice-meta block span { font-size: .85rem; color: #64748B; }
+  .invoice-body { padding: 26px 38px; }
+  .invoice-item-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+  .invoice-item-meta { color: #64748B; font-size: .9rem; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid #EEF2F7; font-size: .93rem; }
+  th { background: #F1F5F9; font-size: .76rem; text-transform: uppercase; letter-spacing: .6px; color: #64748B; }
+  .right { text-align: right; }
+  tr.grand td { border-bottom: none; }
+  .grand-total-row td { background: #F8FAFC; font-weight: 700; font-size: 1.08rem; border-radius: 8px; }
+  .grand-total-row .amount { color: #16A34A; font-size: 1.2rem; }
+  .invoice-foot { padding: 24px 38px 32px; text-align: center; color: #94A3B8; font-size: .8rem; line-height: 1.6; }
+  .support { margin-top: 8px; }
+  .status-ok { color: #22C55E; font-weight: 700; }
+  @media print { body { padding: 0; } .invoice { box-shadow: none; border-radius: 0; } }
+</style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="invoice-head">
+      <div>
+        <div class="brand">
+          <i>✈</i><h1>{{ SITE_NAME }}</h1>
+        </div>
+        <small>Official Travel Invoice</small>
+        <span class="invoice-badge">Tax Invoice</span>
+      </div>
+      <div class="right">
+        <strong>Invoice #{{ invoice_no }}</strong><br>
+        <small>Issued: {{ invoice_date|date:"M d, Y" }}</small><br>
+        <small>Status: <span class="status-ok">{{ payment.get_status_display }}</span></small>
+      </div>
+    </div>
+
+    <div class="invoice-meta">
+      <block>
+        <span class="label">Billed To</span>
+        <strong>{{ billed_to.name }}</strong>
+        <div>{{ billed_to.email }}<br>{{ billed_to.phone }}</div>
+      </block>
+      <block style="text-align:right">
+        <span class="label">Payment Details</span>
+        <strong>{{ payment.get_gateway_display }}</strong>
+        <div>Transaction: {{ payment.transaction_id }}<br>
+             Order: {{ payment.order_id|default:"—" }}<br>
+             Payment: {{ payment.payment_id|default:"—" }}</div>
+      </block>
+    </div>
+
+    <div class="invoice-body">
+      <h3 class="invoice-item-title">{{ item.label }}</h3>
+      <span class="invoice-item-meta">
+        {{ item.destination }} &nbsp;•&nbsp; {{ item.dates }} &nbsp;•&nbsp; {{ item.travelers }} traveler{{ item.travelers|pluralize }}
+      </span>
+
+      <table>
+        <thead>
+          <tr><th>Description</th><th class="right">Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Base fare</td><td class="right">{{ currency_symbol }} {{ booking.base_price|floatformat:2 }}</td></tr>
+          <tr><td>Taxes &amp; fees</td><td class="right">{{ currency_symbol }} {{ booking.taxes|floatformat:2 }}</td></tr>
+          {% if booking.discount %}
+          <tr><td>Discount</td><td class="right">− {{ currency_symbol }} {{ booking.discount|floatformat:2 }}</td></tr>
+          {% endif %}
+          {% if booking.service_fee %}
+          <tr><td>Service fee</td><td class="right">{{ currency_symbol }} {{ booking.service_fee|floatformat:2 }}</td></tr>
+          {% endif %}
+          <tr class="grand grand-total-row">
+            <td>Total Paid</td>
+            <td class="right grand">{{ currency_symbol }} {{ payment.amount|floatformat:2 }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top:22px;font-size:.85rem;color:#64748B;line-height:1.7">
+        Thank you for travelling with {{ SITE_NAME }}. This invoice was generated for booking
+        <strong>{{ booking.booking_id }}</strong> and is a valid record of payment.
+        For any questions, contact {{ SUPPORT_EMAIL|default:"support@travelbooking.local" }} · {{ SUPPORT_PHONE }}.
+      </p>
+    </div>
+
+    <div class="invoice-foot">
+      Generated on {{ invoice_date|date:"M d, Y H:i" }} • {{ SITE_NAME }} • {{ SITE_URL }}<br>
+      <span class="support">{{ SUPPORT_EMAIL }}</span>
+    </div>
+  </div>
+</body>
+</html>

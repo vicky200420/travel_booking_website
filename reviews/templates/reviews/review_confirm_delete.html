@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Review | TravelBooking{% endblock %}
+
+{% block content %}
+{% url 'my_reviews' as my_reviews_url %}
+<div class="page-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                {% include 'components/breadcrumbs.html' with back_label='My Reviews' back_url=my_reviews_url page_label='Delete Review' %}
+                <div class="content-card p-5 text-center">
+                    <div class="mb-4">
+                        <div class="empty-state-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                    </div>
+                    <h4 class="fw-bold mb-2">Delete This Review?</h4>
+                    <p class="text-muted mb-4">This action cannot be undone. Your review and all images will be permanently removed.</p>
+
+                    <div class="bg-light rounded-3 p-3 mb-4 text-start">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <span style="color:#F59E0B;font-size:1.3rem;">★</span>
+                            <span class="fw-bold">{{ review.rating }}/5</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">{{ review.title }}</h6>
+                        <p class="small text-muted mb-0">{{ review.review_text|truncatechars:150 }}</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg flex-fill">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </button>
+                            <a href="{% url 'my_reviews' %}" class="btn btn-outline-secondary btn-lg flex-fill">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

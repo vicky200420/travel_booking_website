@@ -1,0 +1,629 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TravelBooking — Explore the World{% endblock %}
+
+{% block meta %}
+<meta name="description" content="TravelBooking helps you plan your perfect trip — compare flight fares, book handpicked hotels and explore curated holiday packages with verified reviews.">
+<meta property="og:title" content="TravelBooking — Explore the World">
+<meta property="og:description" content="Book flights, hotels and curated holiday packages. Plan your perfect trip with TravelBooking.">
+{% endblock %}
+
+{% block main_class %}site-main--flush{% endblock %}
+
+{% block cinematic_background %}{% include 'components/cinematic_background.html' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     HERO + SEARCH WIDGET
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-hero" aria-label="Plan your next trip">
+    <div class="lp-hero-media" role="presentation"></div>
+    <div class="container">
+        <div class="lp-hero-content">
+            <span class="lp-hero-badge anim-fade-down"><i class="bi bi-stars" aria-hidden="true"></i> Award-winning travel platform · 2026</span>
+            <h1 class="anim-fade-up">Your adventure begins<br><span class="text-gradient">here.</span></h1>
+            <p class="lp-hero-sub anim-fade-up anim-delay-1">Compare flights, book handpicked hotels and explore curated packages — all in one seamless journey.</p>
+            <div class="lp-hero-cta anim-fade-up anim-delay-2">
+                <a href="{% url 'package_list' %}" class="btn btn-gradient btn-ripple"><span><i class="bi bi-compass me-2" aria-hidden="true"></i>Explore Packages</span></a>
+                <a href="{% url 'maps:destination_map' %}" class="btn-ghost-lite"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>Discover Destinations</a>
+            </div>
+
+            <!-- Animated search widget -->
+            <div class="search-widget anim-fade-up anim-delay-3" role="tablist" aria-label="Search travel options">
+                <div class="search-tabs" id="searchTabs">
+                    <span class="search-tab-indicator" aria-hidden="true"></span>
+                    <button class="search-tab active" role="tab" aria-selected="true" aria-controls="pane-flights" data-pane="flights"><i class="bi bi-airplane" aria-hidden="true"></i>Flights</button>
+                    <button class="search-tab" role="tab" aria-selected="false" aria-controls="pane-hotels" data-pane="hotels" tabindex="-1"><i class="bi bi-building" aria-hidden="true"></i>Hotels</button>
+                    <button class="search-tab" role="tab" aria-selected="false" aria-controls="pane-packages" data-pane="packages" tabindex="-1"><i class="bi bi-box-seam" aria-hidden="true"></i>Packages</button>
+                </div>
+
+                <!-- Flights -->
+                <div class="search-pane active" id="pane-flights" role="tabpanel" aria-labelledby="pane-flights">
+                    <form method="GET" action="{% url 'flight_search' %}">
+                        <div class="row g-3">
+                            <div class="col-md-4 col-sm-6">
+                                <label class="form-label" for="hf-from"><i class="bi bi-send" aria-hidden="true"></i>From</label>
+                                <input type="text" name="departure_city" id="hf-from" class="form-control" placeholder="City or airport" autocomplete="off">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label class="form-label" for="hf-to"><i class="bi bi-geo-alt" aria-hidden="true"></i>To</label>
+                                <input type="text" name="destination_city" id="hf-to" class="form-control" placeholder="City or airport" autocomplete="off">
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label" for="hf-depart"><i class="bi bi-calendar" aria-hidden="true"></i>Depart</label>
+                                <input type="date" name="departure_date" id="hf-depart" class="form-control">
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <label class="form-label" for="hf-return"><i class="bi bi-calendar" aria-hidden="true"></i>Return</label>
+                                <input type="date" name="return_date" id="hf-return" class="form-control">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label class="form-label" for="hf-pax"><i class="bi bi-people" aria-hidden="true"></i>Travellers</label>
+                                <select name="travellers" id="hf-pax" class="form-select">
+                                    <option value="1">1 traveller</option>
+                                    <option value="2">2 travellers</option>
+                                    <option value="3">3 travellers</option>
+                                    <option value="4">4+ travellers</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label class="form-label" for="hf-class"><i class="bi bi-bar-chart" aria-hidden="true"></i>Cabin</label>
+                                <select name="cabin_class" id="hf-class" class="form-select">
+                                    <option value="">All classes</option>
+                                    <option value="Economy">Economy</option>
+                                    <option value="Premium Economy">Premium Economy</option>
+                                    <option value="Business">Business</option>
+                                    <option value="First Class">First Class</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <label class="form-label" for="hf-price"><i class="bi bi-currency-rupee" aria-hidden="true"></i>Max price</label>
+                                <input type="number" name="max_price" id="hf-price" class="form-control" placeholder="₹" min="0">
+                            </div>
+                            <div class="col-md-2 col-sm-6 d-flex align-items-end">
+                                <button type="submit" class="btn btn-gradient w-100 btn-ripple"><span><i class="bi bi-search me-2" aria-hidden="true"></i>Search</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Hotels -->
+                <div class="search-pane" id="pane-hotels" role="tabpanel" aria-labelledby="pane-hotels">
+                    <form method="GET" action="{% url 'hotel_search' %}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="hh-dest"><i class="bi bi-geo-alt" aria-hidden="true"></i>Destination</label>
+                                <input type="text" name="destination" id="hh-dest" class="form-control" placeholder="Where are you going?" autocomplete="off">
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label class="form-label" for="hh-in"><i class="bi bi-calendar" aria-hidden="true"></i>Check-in</label>
+                                <input type="date" name="check_in" id="hh-in" class="form-control">
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label class="form-label" for="hh-out"><i class="bi bi-calendar" aria-hidden="true"></i>Check-out</label>
+                                <input type="date" name="check_out" id="hh-out" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label" for="hh-guests"><i class="bi bi-people" aria-hidden="true"></i>Guests</label>
+                                <select name="guests" id="hh-guests" class="form-select">
+                                    <option value="1">1</option><option value="2">2</option>
+                                    <option value="3">3</option><option value="4">4</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label" for="hh-rooms"><i class="bi bi-door-open" aria-hidden="true"></i>Rooms</label>
+                                <select name="rooms" id="hh-rooms" class="form-select">
+                                    <option value="1">1</option><option value="2">2</option>
+                                    <option value="3">3</option><option value="4">4</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="hh-minprice"><i class="bi bi-currency-rupee" aria-hidden="true"></i>Max per night</label>
+                                <input type="number" name="max_price" id="hh-minprice" class="form-control" placeholder="₹" min="0">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button type="submit" class="btn btn-gradient w-100 btn-ripple"><span><i class="bi bi-search me-2" aria-hidden="true"></i>Find Hotels</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Packages -->
+                <div class="search-pane" id="pane-packages" role="tabpanel" aria-labelledby="pane-packages">
+                    <form method="GET" action="{% url 'package_search' %}">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label" for="hp-dest"><i class="bi bi-geo-alt" aria-hidden="true"></i>Destination</label>
+                                <input type="text" name="destination" id="hp-dest" class="form-control" placeholder="Destination, city or country" autocomplete="off">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="hp-cat"><i class="bi bi-tag" aria-hidden="true"></i>Category</label>
+                                <select name="category" id="hp-cat" class="form-select">
+                                    <option value="">All categories</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Beach">Beach</option>
+                                    <option value="Honeymoon">Honeymoon</option>
+                                    <option value="Luxury">Luxury</option>
+                                    <option value="Family">Family</option>
+                                    <option value="Solo">Solo</option>
+                                    <option value="Wildlife">Wildlife</option>
+                                    <option value="Wellness">Wellness</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" for="hp-dur"><i class="bi bi-clock-history" aria-hidden="true"></i>Duration</label>
+                                <select name="duration" id="hp-dur" class="form-select">
+                                    <option value="">Any duration</option>
+                                    <option value="1_3">1–3 days</option>
+                                    <option value="4_7">4–7 days</option>
+                                    <option value="8_14">8–14 days</option>
+                                    <option value="15+">15+ days</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label" for="hp-price"><i class="bi bi-currency-rupee" aria-hidden="true"></i>Max price</label>
+                                <input type="number" name="max_price" id="hp-price" class="form-control" placeholder="₹" min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="hp-sort"><i class="bi bi-sort-down" aria-hidden="true"></i>Sort by</label>
+                                <select name="sort_by" id="hp-sort" class="form-select">
+                                    <option value="">Recommended</option>
+                                    <option value="price_low">Lowest price</option>
+                                    <option value="rating_high">Highest rated</option>
+                                    <option value="most_popular">Most popular</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end">
+                                <button type="submit" class="btn btn-gradient w-100 btn-ripple"><span><i class="bi bi-search me-2" aria-hidden="true"></i>Explore Packages</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="search-quicklinks">
+                    <a href="{% url 'flights' %}"><i class="bi bi-airplane" aria-hidden="true"></i>Browse all flights</a>
+                    <a href="{% url 'hotel_list' %}"><i class="bi bi-building" aria-hidden="true"></i>Browse all hotels</a>
+                    <a href="{% url 'package_list' %}"><i class="bi bi-box-seam" aria-hidden="true"></i>All packages</a>
+                    <a href="{% url 'maps:hotel_map' %}"><i class="bi bi-map" aria-hidden="true"></i>Explore the map</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lp-scroll-hint" aria-hidden="true"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     STATS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-stats" aria-label="Platform statistics">
+    <div class="container">
+        <div class="row g-3 g-lg-4 justify-content-center">
+            <div class="col-6 col-md-3">
+                <div class="lp-stat-card reveal">
+                    <span class="lp-stat-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+                    <div class="lp-stat-value" data-counter>{{ stats.package_count|default:0 }}</div>
+                    <div class="lp-stat-label">Curated Packages</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="lp-stat-card reveal anim-delay-1">
+                    <span class="lp-stat-icon"><i class="bi bi-building" aria-hidden="true"></i></span>
+                    <div class="lp-stat-value" data-counter>{{ stats.hotel_count|default:0 }}</div>
+                    <div class="lp-stat-label">Verified Hotels</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="lp-stat-card reveal anim-delay-2">
+                    <span class="lp-stat-icon"><i class="bi bi-emoji-smile" aria-hidden="true"></i></span>
+                    <div class="lp-stat-value" data-counter data-suffix="k">50</div>
+                    <div class="lp-stat-label">Happy Travellers</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="lp-stat-card reveal anim-delay-3">
+                    <span class="lp-stat-icon"><i class="bi bi-star" aria-hidden="true"></i></span>
+                    <div class="lp-stat-value" data-counter>4.8</div>
+                    <div class="lp-stat-label">Average Rating</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     POPULAR DESTINATIONS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section" id="destinations">
+    <div class="container">
+        <div class="lp-section-head reveal">
+            <span class="lp-eyebrow"><i class="bi bi-compass" aria-hidden="true"></i>Where to next?</span>
+            <h2>Popular Destinations</h2>
+            <p>Handpicked escapes our travellers love — from sun-drenched beaches to snow-capped peaks.</p>
+        </div>
+        <div class="row g-3 g-lg-4">
+            {% for dest in stats.destinations %}
+            <div class="col-6 col-md-4 col-lg-3 reveal">
+                <a class="dest-card" href="{% url 'hotel_search' %}?destination={{ dest.city|urlencode }}" aria-label="Hotels in {{ dest.city }}">
+                    <span class="dest-card-img" style="background-image:url('{{ dest.image }}');" role="presentation"></span>
+                    <span class="dest-card-count">{{ dest.country }}</span>
+                    <span class="dest-card-body">
+                        <h5>{{ dest.city }}</h5>
+                        <p><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ dest.country }}</p>
+                    </span>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="bi bi-globe2 fs-1 d-block mb-2" aria-hidden="true"></i>
+                New destinations are being added — check back soon.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TRENDING PACKAGES
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="packages">
+    <div class="container">
+        <div class="lp-head-row reveal">
+            <div>
+                <span class="lp-eyebrow"><i class="bi bi-fire" aria-hidden="true"></i>Trending now</span>
+                <h2 class="mb-0">Trending Packages</h2>
+            </div>
+            <a class="lp-view-all" href="{% url 'package_list' %}">View all packages <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="row g-3 g-lg-4">
+            {% for package in featured_packages %}
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="trend-card">
+                    <a href="{{ package.get_absolute_url }}" class="trend-media d-block" tabindex="-1" aria-hidden="true">
+                        {% if package.cover_image %}
+                            <img src="{{ package.cover_image.url }}" alt="" loading="lazy">
+                        {% else %}
+                            <div class="no-image"><i class="bi bi-image" aria-hidden="true"></i></div>
+                        {% endif %}
+                        {% if package.featured %}<span class="trend-badge"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>Featured</span>{% endif %}
+                        {% if package.has_discount %}<span class="trend-discount">{{ package.discount_percentage|floatformat:0 }}% OFF</span>{% endif %}
+                    </a>
+                    <div class="trend-body">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h5>{{ package.title }}</h5>
+                            <span class="trend-rating"><i class="bi bi-star-fill" aria-hidden="true"></i>{{ package.average_rating|floatformat:1 }}</span>
+                        </div>
+                        <p class="trend-loc"><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ package.destination }}, {{ package.country }}</p>
+                        <div class="trend-meta">
+                            <span><i class="bi bi-clock" aria-hidden="true"></i>{{ package.duration_display }}</span>
+                            <span><i class="bi bi-tag" aria-hidden="true"></i>{{ package.category }}</span>
+                            <span><i class="bi bi-people" aria-hidden="true"></i>{{ package.max_travelers }} max</span>
+                        </div>
+                        <div class="trend-foot">
+                            <div class="trend-price">
+                                {% if package.has_discount %}
+                                <small><span class="strike">₹{{ package.price|floatformat:0 }}</span></small>
+                                {% endif %}
+                                <strong>₹{{ package.display_price|floatformat:0 }}</strong>
+                                <small>per person</small>
+                            </div>
+                            <a href="{{ package.get_absolute_url }}" class="btn btn-outline-primary btn-sm btn-ripple"><span>View deal</span></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="bi bi-box-seam fs-1 d-block mb-2" aria-hidden="true"></i>
+                Packages are being curated — check back soon.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     FEATURED HOTELS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section" id="hotels">
+    <div class="container">
+        <div class="lp-head-row reveal">
+            <div>
+                <span class="lp-eyebrow"><i class="bi bi-building" aria-hidden="true"></i>Stay in style</span>
+                <h2 class="mb-0">Featured Hotels</h2>
+            </div>
+            <a class="lp-view-all" href="{% url 'hotel_list' %}">View all hotels <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="row g-3 g-lg-4">
+            {% for hotel in featured_hotels %}
+            <div class="col-md-6 col-lg-3 reveal">
+                <a class="hotel-tile" href="{{ hotel.get_absolute_url }}">
+                    <span class="hotel-tile-img" style="background-image:url('{% if hotel.image %}{{ hotel.image.url }}{% else %}https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80{% endif %}');" role="presentation"></span>
+                    <span class="hotel-tile-top">
+                        <span class="hotel-tile-stars">
+                            {% for i in "12345" %}
+                                <i class="bi {% if forloop.counter <= hotel.star_rating %}bi-star-fill{% else %}bi-star{% endif %}" aria-hidden="true"></i>
+                            {% endfor %}
+                        </span>
+                        <span class="hotel-tile-rating"><i class="bi bi-star-fill" aria-hidden="true"></i>{{ hotel.average_rating|floatformat:1 }}</span>
+                    </span>
+                    <span class="hotel-tile-body">
+                        <h5>{{ hotel.name }}</h5>
+                        <p><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ hotel.city }}, {{ hotel.country }}</p>
+                        <span class="hotel-tile-price">
+                            {% if hotel.has_discount %}<small><s>₹{{ hotel.price_per_night|floatformat:0 }}</s></small> {% endif %}
+                            <strong>₹{{ hotel.display_price|floatformat:0 }}</strong>
+                            <small> / night</small>
+                        </span>
+                    </span>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="bi bi-building fs-1 d-block mb-2" aria-hidden="true"></i>
+                Handpicked stays are on the way.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SPECIAL OFFERS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="offers">
+    <div class="container">
+        <div class="lp-section-head reveal">
+            <span class="lp-eyebrow"><i class="bi bi-tag" aria-hidden="true"></i>Limited time</span>
+            <h2>Special Offers</h2>
+            <p>Unlock exclusive deals on flights, stays and full itineraries.</p>
+        </div>
+        <div class="row g-3 g-lg-4">
+            <div class="col-md-4 reveal">
+                <div class="offer-card" style="--offer-bg:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80');">
+                    <span class="offer-tag">Up to 20% off</span>
+                    <h4>Beach Escapes</h4>
+                    <p>Sun-soaked getaways with flights + stay bundled.</p>
+                    <a href="{% url 'package_search' %}?category=Beach" class="btn">Explore beaches <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 reveal anim-delay-1">
+                <div class="offer-card" style="--offer-bg:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1000&q=80');">
+                    <span class="offer-tag">Save 15%</span>
+                    <h4>Mountain Retreats</h4>
+                    <p>Himalayan serenity, wellness packages and treks.</p>
+                    <a href="{% url 'package_search' %}?category=Hill%20Station" class="btn">Explore mountains <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 reveal anim-delay-2">
+                <div class="offer-card" style="--offer-bg:url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1000&q=80');">
+                    <span class="offer-tag">Extra 10%</span>
+                    <h4>Honeymoon Specials</h4>
+                    <p>Romantic stays, candle-lit dinners and private tours.</p>
+                    <a href="{% url 'package_search' %}?category=Honeymoon" class="btn">Explore romance <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TESTIMONIALS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section" id="stories">
+    <div class="container">
+        <div class="lp-section-head reveal">
+            <span class="lp-eyebrow"><i class="bi bi-chat-quote" aria-hidden="true"></i>Travel stories</span>
+            <h2>Loved by Travellers</h2>
+            <p>Real reviews from verified travellers across the world.</p>
+        </div>
+        <div class="row g-3 g-lg-4">
+            <div class="col-md-4 reveal">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <div class="testimonial-text"><i class="bi bi-quote quote"></i>The Kerala package was flawless — every detail handled, from airport pickup to the houseboat stay. Best trip of my life!</div>
+                    <div class="testimonial-author">
+                        <span class="testimonial-avatar">AS</span>
+                        <div><strong>Ananya Sharma</strong><span>Kerala · 6 days ago</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 reveal anim-delay-1">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <div class="testimonial-text"><i class="bi bi-quote quote"></i>Booked a last-minute flight to Bali and the search made it effortless. The price comparison saved me a fortune.</div>
+                    <div class="testimonial-author">
+                        <span class="testimonial-avatar">RK</span>
+                        <div><strong>Rahul Kapoor</strong><span>Bali · 2 weeks ago</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 reveal anim-delay-2">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+                    <div class="testimonial-text"><i class="bi bi-quote quote"></i>The hotel recommendations are spot on. Verified photos and reviews made choosing the perfect resort so easy.</div>
+                    <div class="testimonial-author">
+                        <span class="testimonial-avatar">PM</span>
+                        <div><strong>Priya Menon</strong><span>Goa · 3 weeks ago</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PARTNER LOGOS
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section pt-0" aria-label="Our partners">
+    <div class="container">
+        <div class="partner-marquee">
+            <div class="partner-track">
+                <span class="partner-logo"><i class="bi bi-airplane-engines" aria-hidden="true"></i>AirAero</span>
+                <span class="partner-logo"><i class="bi bi-building" aria-hidden="true"></i>GrandStay</span>
+                <span class="partner-logo"><i class="bi bi-globe2" aria-hidden="true"></i>Wanderlust</span>
+                <span class="partner-logo"><i class="bi bi-sun" aria-hidden="true"></i>SunTrip</span>
+                <span class="partner-logo"><i class="bi bi-geo-alt" aria-hidden="true"></i>Traverse</span>
+                <span class="partner-logo"><i class="bi bi-compass" aria-hidden="true"></i>Horizon</span>
+                <span class="partner-logo"><i class="bi bi-box-seam" aria-hidden="true"></i>Pack &amp; Go</span>
+                <span class="partner-logo"><i class="bi bi-airplane-engines" aria-hidden="true"></i>AirAero</span>
+                <span class="partner-logo"><i class="bi bi-building" aria-hidden="true"></i>GrandStay</span>
+                <span class="partner-logo"><i class="bi bi-globe2" aria-hidden="true"></i>Wanderlust</span>
+                <span class="partner-logo"><i class="bi bi-sun" aria-hidden="true"></i>SunTrip</span>
+                <span class="partner-logo"><i class="bi bi-geo-alt" aria-hidden="true"></i>Traverse</span>
+                <span class="partner-logo"><i class="bi bi-compass" aria-hidden="true"></i>Horizon</span>
+                <span class="partner-logo"><i class="bi bi-box-seam" aria-hidden="true"></i>Pack &amp; Go</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TRAVEL INSPIRATION
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section lp-section-alt" id="inspiration">
+    <div class="container">
+        <div class="lp-section-head reveal">
+            <span class="lp-eyebrow"><i class="bi bi-lightbulb" aria-hidden="true"></i>Get inspired</span>
+            <h2>Travel Inspiration</h2>
+            <p>Guides, tips and ideas to shape your next getaway.</p>
+        </div>
+        <div class="row g-3 g-lg-4">
+            <div class="col-md-4 reveal">
+                <article class="inspire-card">
+                    <a href="{% url 'maps:destination_map' %}" class="inspire-media d-block" tabindex="-1" aria-hidden="true">
+                        <img src="https://images.unsplash.com/photo-1519824145371-296894a0daa9?auto=format&fit=crop&w=800&q=80" alt="" loading="lazy">
+                    </a>
+                    <span class="inspire-cat">Guides</span>
+                    <div class="inspire-body">
+                        <h5>10 Hidden Gems for Your Next Adventure</h5>
+                        <p>Skip the crowds. These underrated destinations offer big experiences without the tourist rush.</p>
+                        <div class="inspire-foot">
+                            <span><i class="bi bi-clock me-1" aria-hidden="true"></i>6 min read</span>
+                            <a href="{% url 'maps:destination_map' %}" aria-label="Read 10 hidden gems guide"><i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4 reveal anim-delay-1">
+                <article class="inspire-card">
+                    <a href="{% url 'package_search' %}?category=Beach" class="inspire-media d-block" tabindex="-1" aria-hidden="true">
+                        <img src="https://images.unsplash.com/photo-1509233725247-49e657c54213?auto=format&fit=crop&w=800&q=80" alt="" loading="lazy">
+                    </a>
+                    <span class="inspire-cat">Beach</span>
+                    <div class="inspire-body">
+                        <h5>The Perfect 5-Day Island Escape Itinerary</h5>
+                        <p>From sunrise dips to beachside dinners — plan the ultimate relaxing island trip.</p>
+                        <div class="inspire-foot">
+                            <span><i class="bi bi-clock me-1" aria-hidden="true"></i>4 min read</span>
+                            <a href="{% url 'package_search' %}?category=Beach" aria-label="Read island escape itinerary"><i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4 reveal anim-delay-2">
+                <article class="inspire-card">
+                    <a href="{% url 'package_search' %}?category=Hill%20Station" class="inspire-media d-block" tabindex="-1" aria-hidden="true">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="" loading="lazy">
+                    </a>
+                    <span class="inspire-cat">Mountains</span>
+                    <div class="inspire-body">
+                        <h5>Planning a Himalayan Trek: A First-Timer's Guide</h5>
+                        <p>What to pack, when to go and how to train for your first high-altitude adventure.</p>
+                        <div class="inspire-foot">
+                            <span><i class="bi bi-clock me-1" aria-hidden="true"></i>8 min read</span>
+                            <a href="{% url 'package_search' %}?category=Hill%20Station" aria-label="Read Himalayan trek guide"><i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     FAQ
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section" id="faq">
+    <div class="container">
+        <div class="lp-section-head reveal">
+            <span class="lp-eyebrow"><i class="bi bi-question-circle" aria-hidden="true"></i>Good to know</span>
+            <h2>Frequently Asked Questions</h2>
+            <p>Quick answers to everything you need to know before you book.</p>
+        </div>
+        <div class="faq-wrap reveal">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">How do I cancel or modify a booking?</button>
+                    </h3>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Head to <strong>My Bookings</strong> in your dashboard, open the booking and choose <em>Cancel</em>. Refunds follow the policy shown at checkout — most bookings are refundable within 24 hours of purchase.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">What payment methods are accepted?</button>
+                    </h3>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">We support UPI, cards (Visa, Mastercard, RuPay), net banking and popular wallets via our secure payment gateway. All transactions are encrypted end-to-end.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">Do reviews come from verified travellers?</button>
+                    </h3>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Yes. Only users who completed a booking can write a review, and each review carries the reviewer's travel history so you can trust what you read.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">How does the loyalty points programme work?</button>
+                    </h3>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Earn points on every completed booking, and higher-tier members earn bonus points. Points can be redeemed for discounts on your next trip — your balance is always visible in your dashboard.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">Is my personal data safe?</button>
+                    </h3>
+                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">Absolutely. We use bank-grade encryption, never store full card numbers, and follow strict privacy practices. Read our Privacy Policy for full details.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     NEWSLETTER CTA
+     ══════════════════════════════════════════════════════════════════════ -->
+<section class="lp-section pt-0">
+    <div class="container">
+        <div class="newsletter-cta text-center reveal">
+            <h2>Don't miss out on travel deals</h2>
+            <p class="mx-auto" style="max-width:520px;">Join our newsletter for exclusive offers, early-bird discounts and destination inspiration straight to your inbox.</p>
+            <form class="newsletter-form mx-auto" action="#" method="post">
+                {% csrf_token %}
+                <label class="visually-hidden" for="nl-email">Email address</label>
+                <input type="email" class="form-control" id="nl-email" name="email" placeholder="you@email.com" required>
+                <button type="submit" class="btn btn-light fw-semibold"><i class="bi bi-send me-1" aria-hidden="true"></i>Subscribe</button>
+            </form>
+            <p class="small mt-3 mb-0 opacity-75"><i class="bi bi-shield-check me-1" aria-hidden="true"></i>No spam. Unsubscribe anytime.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'home/js/script.js' %}"></script>
+{% endblock %}

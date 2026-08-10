@@ -1,0 +1,79 @@
+{% load static %}
+<div class="search-hero">
+    <div class="search-hero-bg"></div>
+    <div class="container position-relative" style="z-index:2;">
+        <div class="search-form-wrapper glass-card p-4 p-lg-5">
+            <form method="GET" action="{% url 'flight_search' %}" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-geo-alt me-1"></i>From
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-send"></i></span>
+                            {{ form.departure_city }}
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-geo-alt me-1"></i>To
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                            {{ form.destination_city }}
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-calendar me-1"></i>Depart
+                        </label>
+                        {{ form.departure_date }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-calendar me-1"></i>Return
+                        </label>
+                        {{ form.return_date }}
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-people me-1"></i>Travellers
+                        </label>
+                        {{ form.travellers }}
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-bar-chart me-1"></i>Cabin Class
+                        </label>
+                        {{ form.cabin_class }}
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-currency-dollar me-1"></i>Max Price
+                        </label>
+                        {{ form.max_price }}
+                    </div>
+                    <div class="col-lg-2 col-md-4 d-flex align-items-end gap-3 pb-2">
+                        <div class="form-check">
+                            {{ form.non_stop }}
+                            <label class="form-check-label small fw-medium" for="{{ form.non_stop.id_for_label }}">
+                                Non-stop
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            {{ form.refundable }}
+                            <label class="form-check-label small fw-medium" for="{{ form.refundable.id_for_label }}">
+                                Refundable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-gradient w-100 btn-ripple">
+                            <span><i class="bi bi-search me-2"></i>Search Flights</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<title>{{ site_name }}</title>
+<style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'Helvetica Neue', Arial, sans-serif; color: #0f172a; -webkit-text-size-adjust: 100%; }
+    a { text-decoration: none; }
+    img { border: 0; line-height: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    .wrapper { width: 100%; table-layout: fixed; background-color: #f1f5f9; padding: 24px 0; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .email-card { background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08); }
+    .header { background: linear-gradient(135deg, #2563EB, #06B6D4); padding: 28px 40px; text-align: center; }
+    .logo { font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+    .logo i, .logo span { vertical-align: middle; }
+    .tagline { color: rgba(255, 255, 255, 0.85); font-size: 13px; margin-top: 4px; letter-spacing: 0.3px; }
+    .hero { padding: 36px 40px 8px; text-align: center; }
+    .hero-icon { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 30px; background: rgba(37, 99, 235, 0.1); color: #2563EB; }
+    .hero h1 { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: #0f172a; letter-spacing: -0.3px; }
+    .hero p { font-size: 14px; line-height: 1.6; color: #64748b; margin: 0 0 20px; }
+    .btn { display: inline-block; background: linear-gradient(135deg, #2563EB, #06B6D4); color: #ffffff !important; font-size: 14px; font-weight: 700; padding: 13px 28px; border-radius: 12px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+    .btn-secondary { background: #f1f5f9; color: #2563eb !important; box-shadow: none; }
+    .section { padding: 24px 40px; }
+    .section-title { font-size: 13px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #2563eb; margin: 0 0 14px; }
+    .summary-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #f8fafc; border-radius: 14px; padding: 0; }
+    .summary-table td { padding: 12px 18px; font-size: 13px; border-bottom: 1px solid #eef2f7; }
+    .summary-table tr:last-child td { border-bottom: 0; }
+    .summary-table .label { color: #64748b; }
+    .summary-table .value { font-weight: 700; color: #0f172a; text-align: right; }
+    .summary-table .total-row td { font-size: 15px; }
+    .summary-table .total-row .value { color: #2563eb; font-size: 17px; font-weight: 800; }
+    .block { margin-bottom: 18px; }
+    .block-head { font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 10px; }
+    .divider { height: 1px; background: #eef2f7; margin: 0 40px; }
+    .support { padding: 22px 40px; text-align: center; background: #f8fafc; }
+    .support p { font-size: 13px; color: #64748b; margin: 0 0 8px; }
+    .support a { color: #2563eb; font-weight: 600; }
+    .footer { background: #0f172a; padding: 28px 40px; text-align: center; }
+    .footer .brand { color: #ffffff; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .footer p { color: #94a3b8; font-size: 12px; line-height: 1.7; margin: 0 0 14px; }
+    .social a { display: inline-block; width: 34px; height: 34px; line-height: 34px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #e2e8f0; font-size: 15px; margin: 0 4px; text-align: center; }
+    .footer small { color: #64748b; font-size: 11px; }
+    @media only screen and (max-width: 620px) {
+        .container { width: 100% !important; }
+        .section, .header, .footer, .support { padding-left: 20px !important; padding-right: 20px !important; }
+    }
+</style>
+</head>
+<body>
+<table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center">
+            <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        <div class="email-card">
+
+                            <!-- Header -->
+                            <div class="header">
+                                <div class="logo">{% block logo %}<span>{{ logo_text }}</span>{% endblock %}</div>
+                                <div class="tagline">{{ tagline }}</div>
+                            </div>
+
+                            <!-- Hero -->
+                            <div class="hero">
+                                <div class="hero-icon">{% block hero_icon %}{% endblock %}</div>
+                                <h1>{% block hero_title %}{{ hero_title|default:'' }}{% endblock %}</h1>
+                                <p>{% block hero_message %}{{ message }}{% endblock %}</p>
+                                {% if primary_action %}
+                                    <a class="btn" href="{{ primary_action.url }}">{{ primary_action.label }}</a>
+                                {% endif %}
+                                {% if secondary_action %}
+                                    <p style="margin:14px 0 0;"><a class="btn btn-secondary" href="{{ secondary_action.url }}">{{ secondary_action.label }}</a></p>
+                                {% endif %}
+                            </div>
+
+                            {% block content %}{% endblock %}
+
+                            {% if details_blocks %}
+                                <div class="section">
+                                    {% for block in details_blocks %}
+                                        <div class="block">
+                                            <div class="block-head">{{ block.title }}</div>
+                                            <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+                                                {% for row in block.rows %}
+                                                <tr>
+                                                    <td class="label" width="45%">{{ row.label }}</td>
+                                                    <td class="value" width="55%">{{ row.value }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if summary_items %}
+                                <div class="section">
+                                    <p class="section-title">{{ summary_title|default:'Summary' }}</p>
+                                    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+                                        {% for item in summary_items %}
+                                        <tr>
+                                            <td class="label" width="50%">{{ item.label }}</td>
+                                            <td class="value" width="50%">{{ item.value }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            {% endif %}
+
+                            <!-- Support -->
+                            <div class="support">
+                                <p>Questions? We're here 24/7.</p>
+                                <p>
+                                    <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                                    &nbsp;·&nbsp;
+                                    <a href="tel:{{ support_phone }}">{{ support_phone }}</a>
+                                </p>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="footer">
+                                <div class="brand">{{ logo_text }}</div>
+                                <p>{{ address }}</p>
+                                <div class="social">
+                                    <a href="{{ social.facebook }}" aria-label="Facebook">f</a>
+                                    <a href="{{ social.instagram }}" aria-label="Instagram">&#9650;</a>
+                                    <a href="{{ social.twitter }}" aria-label="X">x</a>
+                                    <a href="{{ social.youtube }}" aria-label="YouTube">&#9654;</a>
+                                </div>
+                                <small>© {{ year }} {{ site_name }} · All rights reserved.</small>
+                                <p>{{ disclaimer }}</p>
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

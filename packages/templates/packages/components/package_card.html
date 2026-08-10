@@ -1,0 +1,68 @@
+{% load static %}
+<div class="package-card glass-card fade-in" data-package-id="{{ package.id }}" data-slug="{{ package.slug }}">
+    <div class="package-card-image">
+        {% if package.cover_image %}
+            <img src="{{ package.cover_image.url }}" alt="{{ package.title }}" loading="lazy">
+        {% else %}
+            <div class="package-card-placeholder">
+                <i class="bi bi-box-seam"></i>
+            </div>
+        {% endif %}
+        <div class="package-card-image-overlay">
+            <button class="btn btn-sm btn-light rounded-circle fav-btn" type="button" title="Save to favorites" aria-label="Save {{ package.title }} to favorites">
+                <i class="bi bi-heart"></i>
+            </button>
+        </div>
+        {% if package.has_discount %}
+            <div class="package-card-discount">
+                <span>-{{ package.discount_percentage|floatformat:0 }}%</span>
+            </div>
+        {% endif %}
+        {% if package.featured %}
+            <div class="package-card-featured">
+                <i class="bi bi-star-fill"></i> Featured
+            </div>
+        {% endif %}
+        <div class="package-card-category-badge">
+            {{ package.category }}
+        </div>
+    </div>
+
+    <div class="package-card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="package-card-title">{{ package.title }}</h5>
+            <div class="package-card-rating-badge">
+                <span>{{ package.average_rating|floatformat:1 }}</span>
+                <i class="bi bi-star-fill"></i>
+            </div>
+        </div>
+
+        <div class="package-card-location mb-2">
+            <i class="bi bi-geo-alt"></i>
+            <span>{{ package.destination }}, {{ package.country }}</span>
+        </div>
+
+        <div class="package-card-meta mb-3">
+            <span><i class="bi bi-clock"></i>{{ package.duration_display }}</span>
+            {% if package.difficulty_level %}
+                <span><i class="bi bi-bar-chart"></i>{{ package.difficulty_level }}</span>
+            {% endif %}
+            <span><i class="bi bi-people"></i>{{ package.max_travelers }}</span>
+        </div>
+
+        <div class="package-card-footer">
+            <div class="package-card-price">
+                {% if package.has_discount %}
+                    <span class="original-price">${{ package.price|floatformat:0 }}</span>
+                {% endif %}
+                <span class="current-price">${{ package.discounted_price|floatformat:0 }}</span>
+                <small class="text-muted">/person</small>
+            </div>
+            <div class="package-card-actions">
+                <a href="{% url 'package_detail' package.slug %}" class="btn btn-gradient btn-sm">
+                    <span>View Details</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

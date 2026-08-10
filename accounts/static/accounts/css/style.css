@@ -1,0 +1,246 @@
+/* ============================
+   TRAVEL BOOKING — ACCOUNTS
+   Auth & profile pages only.
+   Global tokens/components live in static/css/*.css.
+   ============================ */
+
+/* ============================
+   SPLIT LAYOUT (Register)
+   ============================ */
+.split-layout { display: flex; min-height: 100vh; }
+
+.split-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+}
+
+.split-left::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  top: -150px;
+  right: -150px;
+}
+
+.split-left::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  bottom: -100px;
+  left: -100px;
+}
+
+.split-left-content { position: relative; z-index: 1; text-align: center; color: #fff; max-width: 480px; }
+.split-left-content .brand-icon { font-size: 3.5rem; margin-bottom: 24px; display: inline-block; }
+.split-left-content h1 { font-size: 2.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; letter-spacing: -0.03em; }
+.split-left-content p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 32px; font-weight: 300; }
+
+.split-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--bg);
+}
+
+.floating-icons { position: relative; height: 200px; margin: 30px 0; }
+.floating-icons i { position: absolute; font-size: 2rem; color: rgba(255, 255, 255, 0.3); animation: ui-float 6s ease-in-out infinite; }
+.floating-icons i:nth-child(1) { top: 0; left: 20%; animation-delay: 0s; }
+.floating-icons i:nth-child(2) { top: 40%; right: 10%; animation-delay: 1s; }
+.floating-icons i:nth-child(3) { bottom: 0; left: 50%; animation-delay: 2s; }
+.floating-icons i:nth-child(4) { top: 20%; left: 5%; animation-delay: 0.5s; }
+.floating-icons i:nth-child(5) { top: 60%; right: 20%; animation-delay: 1.5s; }
+
+/* ============================
+   AUTH CARD
+   ============================ */
+.auth-card { width: 100%; max-width: 480px; padding: 40px; }
+.auth-card .auth-header { text-align: center; margin-bottom: 32px; }
+.auth-card .auth-header h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+.auth-card .auth-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.auth-divider::before,
+.auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.forgot-password { font-size: 0.85rem; color: var(--primary); font-weight: 500; }
+.forgot-password:hover { text-decoration: underline; }
+
+/* ============================
+   LOGIN HERO
+   ============================ */
+.login-hero {
+  min-height: calc(100vh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(6, 182, 212, 0.8)),
+    url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=1935&q=80') no-repeat center center/cover;
+  position: relative;
+  padding: 20px;
+}
+
+.login-hero .login-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+.login-hero .login-card .brand-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 8px; }
+.login-hero .login-card h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+.login-hero .login-card .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
+
+/* ============================
+   PROFILE PAGE
+   ============================ */
+.profile-cover {
+  height: 240px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: var(--radius-lg);
+  position: relative;
+  margin-bottom: 76px;
+}
+
+.profile-avatar-wrapper {
+  position: absolute;
+  bottom: -50px;
+  left: 40px;
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+}
+.profile-avatar-wrapper .avatar,
+.profile-avatar-wrapper .avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: var(--shadow-lg);
+  object-fit: cover;
+  background: var(--bg);
+}
+.profile-avatar-wrapper .avatar-placeholder {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: var(--font-heading);
+}
+.profile-avatar-wrapper .profile-name h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 2px; }
+.profile-avatar-wrapper .profile-name span { color: var(--text-muted); font-size: 0.9rem; }
+
+.profile-details { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--card-border); padding: 32px; box-shadow: var(--card-shadow); }
+.profile-details .detail-item { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.profile-details .detail-item:last-child { border-bottom: none; }
+.profile-details .detail-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.profile-details .detail-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.profile-details .detail-value { font-weight: 500; font-size: 0.95rem; }
+
+/* ============================
+   EDIT PROFILE
+   ============================ */
+.form-section-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar-upload { position: relative; display: inline-block; }
+.avatar-upload .upload-placeholder {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 3px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--bg);
+  overflow: hidden;
+}
+.avatar-upload .upload-placeholder:hover { border-color: var(--primary); color: var(--primary); background: rgba(37, 99, 235, 0.04); }
+.avatar-upload .upload-placeholder i { font-size: 2rem; }
+.avatar-upload .upload-placeholder span { font-size: 0.8rem; font-weight: 500; }
+.avatar-upload .upload-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-upload input[type="file"] { display: none; }
+
+/* ============================
+   DARK MODE
+   ============================ */
+html[data-theme="dark"] {
+  .login-hero .login-card {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.2);
+  }
+  .login-hero .login-card h2 { color: #E2E8F0; }
+  .profile-avatar-wrapper .avatar,
+  .profile-avatar-wrapper .avatar-placeholder { border-color: #1E293B; }
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */@media (max-width: 992px) {
+  .split-layout { flex-direction: column; }
+  .split-left { padding: 60px 24px; min-height: 50vh; }
+  .split-left-content h1 { font-size: 2rem; }
+  .split-right { padding: 24px; }
+  .auth-card { padding: 24px; }
+  .profile-cover { height: 180px; margin-bottom: 70px; }
+  .profile-avatar-wrapper { left: 50%; transform: translateX(-50%); flex-direction: column; align-items: center; text-align: center; }
+  .profile-avatar-wrapper .avatar,
+  .profile-avatar-wrapper .avatar-placeholder { width: 100px; height: 100px; font-size: 2rem; }
+}
+
+@media (max-width: 576px) {
+  .split-left-content h1 { font-size: 1.6rem; }
+  .auth-card .auth-header h2 { font-size: 1.4rem; }
+  .login-hero .login-card { padding: 28px 20px; }
+  .profile-details { padding: 20px; }
+}

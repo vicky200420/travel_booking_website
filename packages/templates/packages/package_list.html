@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if search_performed %}Search Results — Packages{% else %}Holiday Packages — TravelBooking{% endif %}
+{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Curated holiday packages for every kind of traveller — from beach escapes to mountain treks. Compare prices, durations and destinations.">
+<meta property="og:title" content="Holiday Packages — TravelBooking">
+<meta property="og:description" content="Explore curated travel experiences for every kind of traveller.">
+{% endblock %}
+
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'package_list' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'packages/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block cinematic_background %}{% include 'components/cinematic_background.html' %}{% endblock %}
+
+{% block content %}
+
+{% url 'package_list' as package_list_url %}
+{% if search_performed %}
+    {% include 'components/page_header.html' with page_icon='bi-box-seam' page_title='Search Results' page_subtitle='Matching holiday packages' page_label='Packages' page_actions_template='packages/components/package_list_actions.html' %}
+{% else %}
+    {% include 'components/page_header.html' with page_icon='bi-box-seam' page_title='Holiday Packages' page_subtitle='Curated travel experiences for every kind of traveler' page_label='Packages' page_actions_template='packages/components/package_list_actions.html' %}
+{% endif %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <div class="sticky-sidebar">
+                    {% include 'packages/components/filter_sidebar.html' %}
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                {% if search_performed or package_list %}
+                    <div class="row g-4" id="packageResults">
+                        {% for package in package_list %}
+                            <div class="col-xl-4 col-md-6">
+                                {% include 'packages/components/package_card.html' %}
+                            </div>
+                        {% empty %}
+                            <div class="col-12">
+                                {% include 'components/empty_state.html' with icon='bi-box-seam' title='No Holiday Packages Available' description="We couldn't find any packages matching your criteria. Try adjusting your filters." primary_url=package_list_url primary_icon='bi-compass' primary_label='Explore More Destinations' %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if is_paginated or package_list.paginator.num_pages > 1 %}
+                        {% include 'components/pagination.html' with page_obj=package_list %}
+                    {% endif %}
+                {% else %}
+                    <div class="row g-4" id="packageResults"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'packages/js/script.js' %}"></script>
+{% endblock %}

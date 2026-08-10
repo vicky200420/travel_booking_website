@@ -1,0 +1,109 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-toolbar glass-card">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-12 col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+                <input type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="Search transaction or booking ID…">
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All statuses</option>
+                {% for value, label in status_options %}
+                <option value="{{ value }}" {% if active_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-6 col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill rounded-3"><i class="bi bi-funnel me-1"></i>Filter</button>
+            {% if search_query or active_status %}
+            <a href="{% url 'dashboard_payments' %}" class="btn btn-outline-secondary rounded-3" title="Clear filters"><i class="bi bi-x-lg"></i></a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="dash-table-card glass-card">
+    <div class="dash-table-head">
+        <h6 class="dash-card-heading mb-0"><i class="bi bi-credit-card-fill me-2"></i>Payment History</h6>
+        <span class="badge dash-badge dash-badge-soft">{{ page_obj.paginator.count }} payment{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dash-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Booking</th>
+                    <th>Gateway</th>
+                    <th class="text-end">Amount</th>
+                    <th>Status</th>
+                    <th>Paid Date</th>
+                    <th class="text-end">Invoice</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in payments %}
+                <tr>
+                    <td><strong class="dash-mono">{{ p.transaction_id }}</strong></td>
+                    <td>
+                        <a href="{% url 'booking_detail' p.booking.booking_id %}" class="dash-mono text-decoration-none">{{ p.booking.booking_id }}</a>
+                        <small class="d-block text-muted">{{ p.booking.title_display }}</small>
+                    </td>
+                    <td>
+                        <span class="dash-gateway-chip">
+                            {% if p.gateway == 'razorpay' %}<i class="bi bi-currency-rupee"></i>
+                            {% else %}<i class="bi bi-stripe"></i>{% endif %}
+                            {{ p.get_gateway_display }}
+                        </span>
+                    </td>
+                    <td class="text-end fw-semibold">{{ p.currency }} {{ p.amount|floatformat:2 }}</td>
+                    <td><span class="badge dash-badge badge-{{ p.status_color }}">{{ p.status }}</span></td>
+                    <td>
+                        {% if p.paid_at %}
+                        <small>{{ p.paid_at|date:"M d, Y" }}<br><span class="text-muted">{{ p.paid_at|date:"H:i" }}</span></small>
+                        {% else %}
+                        <small class="text-muted">—</small>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end">
+                            {% if p.status == 'Failed' %}
+                            <form method="post" action="{% url 'payment_retry' p.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-gradient rounded-3" title="Retry payment">
+                                    <span><i class="bi bi-arrow-repeat me-1"></i>Retry</span>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'dashboard_invoice' p.id %}" class="btn btn-sm btn-light rounded-3" title="Download invoice">
+                                <i class="bi bi-file-earmark-arrow-down me-1"></i>Invoice
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="dash-empty py-4">
+                            <i class="bi bi-credit-card-2-front"></i>
+                            <h6>No payments found</h6>
+                            <p>Your payment history will appear here once you complete a booking.</p>
+                            <a href="{% url 'hotel_list' %}" class="btn btn-gradient btn-sm">Browse hotels</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed — {{ booking.booking_id }} | TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'payments/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+<div class="pay-page">
+    <div class="container">
+        <div class="pay-glass pay-confirm-card p-4 p-lg-5 text-center pay-animate">
+
+            <div class="pay-failed-ring">
+                <div class="pay-failed-x"><i class="bi bi-x-lg"></i></div>
+            </div>
+
+            <h3 class="fw-bold mb-2">Payment Not Completed</h3>
+            <p class="text-muted mb-4">
+                Your payment for <strong>Booking {{ booking.booking_id }}</strong> could not be completed.
+                No amount has been charged and your booking is still <span class="badge bg-warning text-dark">Pending</span>.
+            </p>
+
+            {% if payment.transaction_id %}
+            <div class="pay-detail-list text-start mb-4 pay-animate-1">
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Booking ID</span>
+                    <span class="pay-detail-value">{{ booking.booking_id }}</span>
+                </div>
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Transaction ID</span>
+                    <span class="pay-detail-value">{{ payment.transaction_id }}</span>
+                </div>
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Amount</span>
+                    <span class="pay-detail-value">{{ currency_symbol }}{{ payment.amount|floatformat:2 }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="pay-actions pay-animate-2">
+                <a href="{{ retry_url }}" class="btn btn-gradient btn-ripple">
+                    <span><i class="bi bi-arrow-repeat me-2"></i>Retry Payment</span>
+                </a>
+                <a href="{% url 'booking_detail' booking.booking_id %}" class="btn btn-outline-primary">
+                    <i class="bi bi-ticket-detailed me-2"></i>Back To Booking
+                </a>
+                <a href="mailto:{{ support_email }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-headset me-2"></i>Contact Support
+                </a>
+            </div>
+
+            <p class="small text-muted mt-4 mb-0">
+                If money was deducted but this page shows an error, please contact
+                <a href="mailto:{{ support_email }}">{{ support_email }}</a> before paying again.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

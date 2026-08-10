@@ -1,0 +1,145 @@
+/* ==========================================================================
+   TRAVEL BOOKING — DESIGN SYSTEM · RESPONSIVE
+   Breakpoints: 1920 · 1600 · 1440 · 1366 · 1280 · 1024 · 768 · 576 · 480 · 360
+   Dark mode lives in theme.css (data-theme + prefers-color-scheme).
+   ========================================================================== */
+
+/* ---- 1600px+ — very wide screens ---------------------------------------- */
+@media (min-width: 1600px) {
+  :root { --content-pad: 40px; }
+  .dash-content { max-width: 1600px; }
+}
+
+/* ---- 1280–1600 — standard laptop ----------------------------------------- */
+@media (min-width: 1280px) and (max-width: 1599.98px) {
+  :root { --content-pad: 32px; }
+}
+
+/* ---- ≤1200 — small laptop / landscape tablets ----------------------------- */
+@media (max-width: 1199.98px) {
+  .page-title { font-size: 1.8rem; }
+}
+
+/* ---- ≤992 — tablet landscape: collapse sidebar & navbar -------------------- */
+@media (max-width: 991.98px) {
+  :root { --content-pad: 24px; }
+
+  /* Cinema: reduced overlay opacity on tablet so the footage still reads */
+  .cinematic-bg__overlay { background: var(--cinematic-overlay-soft); }
+
+  .navbar-premium .navbar-collapse {
+    position: absolute;
+    top: var(--nav-h);
+    left: 0;
+    right: 0;
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--navbar-border);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    max-height: calc(100vh - var(--nav-h));
+    overflow-y: auto;
+  }
+  .navbar-premium .navbar-nav { align-items: flex-start; }
+  .navbar-premium .nav-link { width: 100%; }
+
+  .dash-sidebar { transform: translateX(-100%); }
+  .dash-sidebar.open { transform: translateX(0); }
+  .dash-main { margin-left: 0; }
+  .dash-topbar { left: 0; }
+
+  .sticky-sidebar { position: static; }
+
+  .page-header-inner { flex-direction: column; align-items: flex-start; }
+  .page-actions { width: 100%; }
+}
+
+/* ---- ≤768 — tablet portrait ----------------------------------------------- */
+@media (max-width: 767.98px) {
+  .page-title { font-size: 1.6rem; }
+  .hero-section h1 { font-size: 2.2rem; }
+  .hero-section { padding: var(--space-5) 0; }
+
+  /* Cinema on phones: static poster frame (lightweight), full veil for legibility */
+  .cinematic-bg__video { display: none; }
+  .cinematic-bg__overlay { background: var(--cinematic-overlay); }
+  .cinematic-bg__glow { opacity: 0.4; }
+
+  .filter-bar-form .filter-bar-grid { grid-template-columns: 1fr; }
+  .filter-bar { padding: var(--space-2); }
+
+  .dash-content { padding: var(--space-2); }
+  .dash-topbar { padding: 0 var(--space-2); }
+
+  /* Tables → card mode (requires data-label on <td>) */
+  .table-cards-on-mobile thead { display: none; }
+  .table-cards-on-mobile,
+  .table-cards-on-mobile tbody,
+  .table-cards-on-mobile tr,
+  .table-cards-on-mobile td { display: block; width: 100%; }
+  .table-cards-on-mobile tr {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-2);
+    padding: var(--space-2);
+    box-shadow: var(--shadow-sm);
+    background: var(--surface);
+  }
+  .table-cards-on-mobile td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    border-bottom: 1px dashed var(--border);
+    padding: 10px 4px;
+    text-align: right;
+  }
+  .table-cards-on-mobile td:last-child { border-bottom: none; }
+  .table-cards-on-mobile td::before {
+    content: attr(data-label);
+    font-weight: var(--fw-semibold);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+}
+
+/* ---- ≤576 — large phones -------------------------------------------------- */
+@media (max-width: 575.98px) {
+  :root { --content-pad: 16px; }
+
+  .page-title { font-size: 1.4rem; }
+  .page-section { padding: var(--space-3) 0; }
+
+  .stat-card { padding: var(--space-2); }
+  .stat-card-value { font-size: 1.5rem; }
+  .stat-card-icon { width: 40px; height: 40px; font-size: 1.15rem; }
+
+  .toast-container { left: 16px; right: 16px; top: calc(var(--nav-h) + 8px); max-width: none; }
+
+  .empty-state { padding: var(--space-4) var(--space-2); }
+  .empty-state-icon { width: 72px; height: 72px; font-size: 2rem; }
+
+  .page-actions .form-select { width: 100% !important; min-width: 0 !important; }
+  .page-actions { gap: var(--space-1); }
+
+  .hero-section h1 { font-size: 1.9rem; }
+
+  .back-to-top { right: 16px; bottom: 16px; }
+}
+
+/* ---- ≤480 — small phones -------------------------------------------------- */
+@media (max-width: 479.98px) {
+  .dash-topbar .dash-page-title p { display: none; }
+  .navbar-premium .navbar-brand { font-size: 1.2rem; }
+}
+
+/* ---- ≤360 — smallest phones ----------------------------------------------- */
+@media (max-width: 359.98px) {
+  .page-title { font-size: 1.25rem; }
+  .btn-gradient, .btn-outline-primary { padding-left: 18px; padding-right: 18px; }
+  .pagination .page-link { min-width: 38px; height: 38px; }
+}

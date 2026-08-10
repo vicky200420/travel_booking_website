@@ -1,0 +1,83 @@
+{% load static %}
+<div class="hotel-card glass-card fade-in" data-hotel-id="{{ hotel.id }}" data-slug="{{ hotel.slug }}">
+    <div class="hotel-card-image">
+        {% if hotel.image %}
+            <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" loading="lazy">
+        {% else %}
+            <div class="hotel-card-placeholder">
+                <i class="bi bi-building"></i>
+            </div>
+        {% endif %}
+        <div class="hotel-card-image-overlay">
+            <button class="btn btn-sm btn-light rounded-circle fav-btn" type="button" title="Save to favorites" aria-label="Save {{ hotel.name }} to favorites">
+                <i class="bi bi-heart"></i>
+            </button>
+            <button class="btn btn-sm btn-light rounded-circle quick-view-btn" type="button" title="Quick view" aria-label="Quick view of {{ hotel.name }}" data-bs-toggle="modal" data-bs-target="#quickViewModal" data-hotel="{{ hotel.id }}">
+                <i class="bi bi-eye"></i>
+            </button>
+        </div>
+        {% if hotel.has_discount %}
+            <div class="hotel-card-discount">
+                <span>-{{ hotel.discount_percentage|floatformat:0 }}%</span>
+            </div>
+        {% endif %}
+        {% if hotel.featured %}
+            <div class="hotel-card-featured">
+                <i class="bi bi-star-fill"></i> Featured
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="hotel-card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="hotel-card-title">{{ hotel.name }}</h5>
+            <div class="hotel-card-rating-badge">
+                <span>{{ hotel.average_rating|floatformat:1 }}</span>
+                <i class="bi bi-star-fill"></i>
+            </div>
+        </div>
+
+        <div class="hotel-card-location mb-2">
+            <i class="bi bi-geo-alt"></i>
+            <span>{{ hotel.city }}, {{ hotel.country }}</span>
+        </div>
+
+        <div class="hotel-card-stars mb-2">
+            {% for i in "12345"|make_list %}
+                {% if forloop.counter <= hotel.star_rating %}
+                    <i class="bi bi-star-fill"></i>
+                {% else %}
+                    <i class="bi bi-star"></i>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="hotel-card-amenities mb-3">
+            {% if hotel.wifi %}<span class="amenity-icon" title="WiFi"><i class="bi bi-wifi"></i></span>{% endif %}
+            {% if hotel.pool %}<span class="amenity-icon" title="Pool"><i class="bi bi-water"></i></span>{% endif %}
+            {% if hotel.parking %}<span class="amenity-icon" title="Parking"><i class="bi bi-car-front"></i></span>{% endif %}
+            {% if hotel.gym %}<span class="amenity-icon" title="Gym"><i class="bi bi-dumbbell"></i></span>{% endif %}
+            {% if hotel.breakfast %}<span class="amenity-icon" title="Breakfast"><i class="bi bi-cup-hot"></i></span>{% endif %}
+            {% if hotel.ac %}<span class="amenity-icon" title="AC"><i class="bi bi-snow"></i></span>{% endif %}
+        </div>
+
+        <div class="hotel-card-footer">
+            <div class="hotel-card-price">
+                {% if hotel.has_discount %}
+                    <span class="original-price">${{ hotel.price_per_night|floatformat:0 }}</span>
+                {% endif %}
+                <span class="current-price">${{ hotel.discounted_price|floatformat:0 }}</span>
+                <small class="text-muted">/night</small>
+            </div>
+            <div class="hotel-card-actions">
+                <span class="hotel-card-rooms {% if hotel.available_rooms < 5 %}low-stock{% endif %}">
+                    <i class="bi bi-door-open"></i>
+                    {{ hotel.available_rooms }} rooms
+                </span>
+                <a href="{% url 'hotel_detail' hotel.slug %}" class="btn btn-gradient btn-sm">
+                    <span>View Details</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile — TravelBooking{% endblock %}
+
+{% block content %}
+{% include 'components/page_header.html' with page_title='Edit Profile' page_icon='bi-pencil-square' page_subtitle='Update your personal information' crumbs=crumbs %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="content-card p-4 p-lg-5 slide-up">
+                    <form method="post" enctype="multipart/form-data" novalidate class="needs-validation">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-4 text-center">
+                            <div class="form-section-title">Profile Photo</div>
+                            <div class="avatar-upload">
+                                <label for="profileImageInput" class="upload-placeholder" id="avatarPreview">
+                                    {% if user.profile_image %}
+                                        <img src="{{ user.profile_image.url }}" alt="Profile">
+                                    {% else %}
+                                        <i class="bi bi-camera"></i>
+                                        <span>Upload Photo</span>
+                                    {% endif %}
+                                </label>
+                                <input type="file" id="profileImageInput" name="profile_image" accept="image/*">
+                            </div>
+                            <p class="small text-muted mt-2">JPG, PNG or WEBP. Max 5MB.</p>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-section-title">Personal Information</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">First Name</label>
+                                    {{ form.first_name }}
+                                    {{ form.first_name.errors }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Name</label>
+                                    {{ form.last_name }}
+                                    {{ form.last_name.errors }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent"><i class="bi bi-telephone"></i></span>
+                                        {{ form.phone_number }}
+                                    </div>
+                                    {{ form.phone_number.errors }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    {{ form.date_of_birth }}
+                                    {{ form.date_of_birth.errors }}
+                                </div>
+                            </div>
+
+                            <div class="form-section-title mt-4">Location</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">City</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent"><i class="bi bi-building"></i></span>
+                                        {{ form.city }}
+                                    </div>
+                                    {{ form.city.errors }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Country</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent"><i class="bi bi-globe2"></i></span>
+                                        {{ form.country }}
+                                    </div>
+                                    {{ form.country.errors }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Address</label>
+                                    {{ form.address }}
+                                    {{ form.address.errors }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-gradient px-5 py-3 flex-fill btn-ripple"><span><i class="bi bi-check2 me-2"></i>Save Changes</span></button>
+                                <a href="{% url 'profile' %}" class="btn btn-outline-primary px-4 py-3"><i class="bi bi-x me-2"></i>Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

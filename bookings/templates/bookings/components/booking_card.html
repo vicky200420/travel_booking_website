@@ -1,0 +1,82 @@
+{% load static %}
+<div class="booking-card glass-card fade-in">
+    <div class="booking-card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="booking-id font-monospace fw-bold">{{ booking.booking_id }}</span>
+                <span class="booking-type-badge ms-2">
+                    {% if booking.booking_type == 'Flight' %}
+                        <i class="bi bi-airplane"></i>
+                    {% elif booking.booking_type == 'Hotel' %}
+                        <i class="bi bi-building"></i>
+                    {% else %}
+                        <i class="bi bi-box-seam"></i>
+                    {% endif %}
+                    {{ booking.booking_type }}
+                </span>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="status-pill status-{{ booking.status|lower }}">{{ booking.status }}</span>
+                <span class="status-pill payment-{{ booking.payment_status|lower }}">{{ booking.payment_status }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="booking-card-body">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-geo-alt text-primary"></i>
+                    <div>
+                        <small class="text-muted d-block">Destination</small>
+                        <span class="fw-semibold">{{ booking.destination_display }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar text-primary"></i>
+                    <div>
+                        <small class="text-muted d-block">Travel Dates</small>
+                        <span class="fw-semibold">{{ booking.travel_start_date|date:"M d" }} — {{ booking.travel_end_date|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-people text-primary"></i>
+                    <div>
+                        <small class="text-muted d-block">Travelers</small>
+                        <span class="fw-semibold">{{ booking.total_travelers }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 text-md-end">
+                <div class="fw-bold fs-5" style="color:var(--primary);">${{ booking.grand_total|floatformat:0 }}</div>
+                <small class="text-muted">Total</small>
+            </div>
+        </div>
+    </div>
+    <div class="booking-card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>Booked {{ booking.booking_date|date:"M d, Y" }}
+            </small>
+            <div class="d-flex gap-2">
+                <a href="{% url 'booking_detail' booking.booking_id %}" class="btn btn-gradient btn-sm">
+                    <span><i class="bi bi-eye me-1"></i>View Details</span>
+                </a>
+                {% if booking.can_cancel %}
+                    <form method="post" action="{% url 'booking_cancel' booking.booking_id %}" class="d-inline" onsubmit="return confirm('Cancel this booking?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </button>
+                    </form>
+                {% endif %}
+                <a href="{% url 'booking_download' booking.booking_id %}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-download"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

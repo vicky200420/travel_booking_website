@@ -1,0 +1,22 @@
+{% load static %}
+<div class="dash-quick-actions glass-card">
+    <h6 class="dash-card-heading"><i class="bi bi-lightning-charge-fill me-2"></i>Quick Actions</h6>
+    <div class="dash-quick-grid">
+        <a href="{% url 'flights' %}" class="dash-quick-btn" style="--qa:0">
+            <span class="dash-quick-icon qa-sky"><i class="bi bi-airplane"></i></span>
+            <span>Search Flights</span>
+        </a>
+        <a href="{% url 'hotel_list' %}" class="dash-quick-btn" style="--qa:1">
+            <span class="dash-quick-icon qa-violet"><i class="bi bi-building"></i></span>
+            <span>Browse Hotels</span>
+        </a>
+        <a href="{% url 'package_list' %}" class="dash-quick-btn" style="--qa:2">
+            <span class="dash-quick-icon qa-amber"><i class="bi bi-box-seam"></i></span>
+            <span>Explore Packages</span>
+        </a>
+        <a href="{% url 'hotel_list' %}" class="dash-quick-btn" style="--qa:3">
+            <span class="dash-quick-icon qa-rose"><i class="bi bi-suitcase-lg"></i></span>
+            <span>Book New Trip</span>
+        </a>
+    </div>
+</div>

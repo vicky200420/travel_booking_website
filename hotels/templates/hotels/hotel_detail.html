@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static review_extras %}
+
+{% block title %}{{ hotel.name }} — TravelBooking{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ hotel.description|striptags|truncatechars:160 }}">
+<meta property="og:title" content="{{ hotel.name }} — Book your stay at TravelBooking">
+<meta property="og:type" content="business.business">
+<meta property="og:description" content="Book {{ hotel.name }} in {{ hotel.city }}, {{ hotel.country }}. {% if hotel.star_rating %}{{ hotel.star_rating }} star hotel{% endif %} with verified guest reviews.">
+{% if hotel.image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ hotel.image.url }}">{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'hotels/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'reviews/css/style.css' %}">
+{% include 'maps/components/map_head.html' %}
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+
+{% url 'hotel_list' as hotel_list_url %}
+<div class="container pt-4">
+    {% include 'components/breadcrumbs.html' with back_label='Hotels' back_url=hotel_list_url page_label=hotel.name %}
+</div>
+
+<div class="hotel-hero">
+    {% if hotel.image %}
+        <img src="{{ hotel.image.url }}" alt="{{ hotel.name }}" class="hotel-hero-img">
+    {% else %}
+        <div class="hotel-hero-placeholder">
+            <i class="bi bi-building"></i>
+        </div>
+    {% endif %}
+    <div class="hotel-hero-overlay">
+        <div class="container">
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold text-white mb-2">{{ hotel.name }}</h1>
+                    <div class="d-flex align-items-center gap-3 text-white-50 mb-3">
+                        <span><i class="bi bi-geo-alt me-1"></i>{{ hotel.city }}, {{ hotel.country }}</span>
+                        <span><i class="bi bi-star-fill text-warning me-1"></i>{{ hotel.star_rating }} Star</span>
+                        <span><i class="bi bi-door-open me-1"></i>{{ hotel.available_rooms }} rooms available</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if hotel.wifi %}<span class="hero-amenity"><i class="bi bi-wifi"></i></span>{% endif %}
+                        {% if hotel.pool %}<span class="hero-amenity"><i class="bi bi-water"></i></span>{% endif %}
+                        {% if hotel.parking %}<span class="hero-amenity"><i class="bi bi-car-front"></i></span>{% endif %}
+                        {% if hotel.spa %}<span class="hero-amenity"><i class="bi bi-flower1"></i></span>{% endif %}
+                        {% if hotel.gym %}<span class="hero-amenity"><i class="bi bi-dumbbell"></i></span>{% endif %}
+                        {% if hotel.restaurant %}<span class="hero-amenity"><i class="bi bi-cup-straw"></i></span>{% endif %}
+                        {% if hotel.ac %}<span class="hero-amenity"><i class="bi bi-snow"></i></span>{% endif %}
+                        {% if hotel.breakfast %}<span class="hero-amenity"><i class="bi bi-cup-hot"></i></span>{% endif %}
+                        {% if hotel.pet_friendly %}<span class="hero-amenity"><i class="bi bi-emoji-smile"></i></span>{% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <div class="hero-price-card">
+                        <div class="d-flex align-items-center justify-content-lg-end gap-2 mb-1">
+                            <div class="hotel-card-rating-badge fs-5">
+                                <span>{{ hotel.average_rating|floatformat:1 }}</span>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <span class="text-white-50">({{ hotel.average_rating|floatformat:0 }} reviews)</span>
+                        </div>
+                        {% if hotel.has_discount %}
+                            <div class="mb-1">
+                                <span class="text-decoration-line-through text-white-50 fs-5">${{ hotel.price_per_night|floatformat:0 }}</span>
+                                <span class="discount-badge ms-2">-{{ hotel.discount_percentage|floatformat:0 }}%</span>
+                            </div>
+                        {% endif %}
+                        <div class="text-white">
+                            <span class="fs-1 fw-bold">${{ hotel.discounted_price|floatformat:0 }}</span>
+                            <span class="fs-6 text-white-50">/night</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-8">
+
+            {% if gallery_images %}
+                <div class="hotel-gallery mb-5">
+                    <h4 class="fw-bold mb-3"><i class="bi bi-images me-2"></i>Gallery</h4>
+                    <div class="row g-2">
+                        {% for img in gallery_images %}
+                            <div class="col-4 col-md-3">
+                                <a href="{{ img.image.url }}" data-lightbox="hotel-gallery" data-title="{{ img.caption }}">
+                                    <img src="{{ img.image.url }}" alt="{{ img.caption|default:hotel.name }}" class="img-fluid rounded-3 gallery-thumb" loading="lazy">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="glass-card p-4 p-lg-5 mb-5">
+                <h4 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>About This Hotel</h4>
+                <p class="text-muted fs-6 lh-lg">{{ hotel.description|default:"No description available."|linebreaks }}</p>
+            </div>
+
+            <div class="glass-card p-4 p-lg-5 mb-5">
+                <h4 class="fw-bold mb-4"><i class="bi bi-grid-3x3-gap me-2"></i>Amenities</h4>
+                <div class="row g-3">
+                    {% if hotel.wifi %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-wifi"></i></div>
+                                <span>Free WiFi</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.pool %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-water"></i></div>
+                                <span>Swimming Pool</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.parking %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-car-front"></i></div>
+                                <span>Free Parking</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.spa %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-flower1"></i></div>
+                                <span>Spa & Wellness</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.gym %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-dumbbell"></i></div>
+                                <span>Fitness Center</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.restaurant %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-cup-straw"></i></div>
+                                <span>Restaurant</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.ac %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-snow"></i></div>
+                                <span>Air Conditioning</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.breakfast %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-cup-hot"></i></div>
+                                <span>Breakfast Included</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if hotel.pet_friendly %}
+                        <div class="col-6 col-md-4">
+                            <div class="amenity-item">
+                                <div class="amenity-icon-wrapper"><i class="bi bi-emoji-smile"></i></div>
+                                <span>Pet Friendly</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="glass-card p-4 p-lg-5 mb-5">
+                <h4 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2"></i>Location</h4>
+                <p class="text-muted mb-3">{{ hotel.address }}</p>
+
+                {% if hotel.has_coordinates %}
+                    {% include 'maps/components/map_card.html' with map_id='hotel-location-map' center_lat=hotel.latitude center_lng=hotel.longitude zoom=15 markers_json=hotel_marker_json height='400px' %}
+
+                    {% if distance_chips %}
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-signpost-split me-2"></i>Approximate Distances</h6>
+                            <div class="distance-chips">
+                                {% for chip in distance_chips %}
+                                    <a href="{{ chip.directions_url }}" target="_blank" rel="noopener"
+                                       class="distance-chip" title="Open in Google Maps">
+                                        <span class="distance-chip-icon"><i class="bi {{ chip.icon }}"></i></span>
+                                        <span class="distance-chip-body">
+                                            <strong>{{ chip.distance_display }}</strong>
+                                            <small>{{ chip.label }}</small>
+                                        </span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="map-placeholder">
+                        <div class="map-placeholder-content">
+                            <i class="bi bi-map"></i>
+                            <h5>Map View</h5>
+                            <p class="text-muted mb-0">Coordinates coming soon</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if nearby_places %}
+                <div class="glass-card p-4 p-lg-5 mb-5">
+                    {% include 'maps/components/nearby_places.html' %}
+                </div>
+            {% endif %}
+
+            <div class="glass-card p-4 p-lg-5 mb-5">
+                <h4 class="fw-bold mb-4"><i class="bi bi-calendar-check me-2"></i>Room Availability & Policies</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-door-open me-2"></i>Room Status</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Total Rooms</span>
+                            <span class="fw-semibold">{{ hotel.total_rooms }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Available Rooms</span>
+                            <span class="fw-semibold {% if hotel.available_rooms < 5 %}text-danger{% else %}text-success{% endif %}">
+                                {{ hotel.available_rooms }}
+                            </span>
+                        </div>
+                        <div class="progress mt-2" style="height:6px;border-radius:3px;">
+                            <div class="progress-bar bg-gradient" role="progressbar"
+                                 style="width:{% widthratio hotel.available_rooms hotel.total_rooms 100 %}%;"
+                                 aria-valuenow="{{ hotel.available_rooms }}" aria-valuemin="0" aria-valuemax="{{ hotel.total_rooms }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-clock me-2"></i>Check-in / Check-out</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Check-in</span>
+                            <span class="fw-semibold">{{ hotel.check_in_time|time:"H:i" }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Check-out</span>
+                            <span class="fw-semibold">{{ hotel.check_out_time|time:"H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% render_reviews hotel 'hotel' %}
+
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-lg-top" style="top:100px;">
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Price Breakdown</h5>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Base rate (1 night)</span>
+                        <span class="fw-medium">${{ hotel.price_per_night|floatformat:2 }}</span>
+                    </div>
+
+                    {% if hotel.has_discount %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-success">Discount ({{ hotel.discount_percentage|floatformat:0 }}%)</span>
+                            <span class="text-success">-${{ hotel.price_per_night|add:hotel.discounted_price|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Taxes & fees</span>
+                        <span class="fw-medium">Included</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="fw-bold fs-5">Total</span>
+                        <span class="fw-bold fs-5" style="color:var(--primary);">${{ hotel.discounted_price|floatformat:2 }}</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 mb-3 small text-muted">
+                        <i class="bi bi-building"></i>
+                        <span>Per night</span>
+                    </div>
+
+                    <a href="{% url 'booking_create' %}?type=hotel&id={{ hotel.id }}" class="btn btn-gradient w-100 btn-lg btn-ripple mb-2">
+                        <span><i class="bi bi-bookmark-check me-2"></i>Book Hotel</span>
+                    </a>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-outline-primary flex-fill fav-btn-detail" data-wishlist-toggle data-model="hotel" data-object-id="{{ hotel.id }}">
+                            <i class="bi bi-heart me-1"></i>Save
+                        </button>
+                        <button class="btn btn-outline-primary flex-fill share-btn">
+                            <i class="bi bi-share me-1"></i>Share
+                        </button>
+                    </div>
+
+                    <div class="mt-3 p-3 rounded-3" style="background:var(--bg);">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-shield-check text-success fs-5"></i>
+                            <span class="fw-semibold small">Secure Booking</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-credit-card text-primary fs-5"></i>
+                            <span class="fw-semibold small">Pay with any card</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-headset text-accent fs-5"></i>
+                            <span class="fw-semibold small">24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-telephone me-2"></i>Contact</h5>
+                    {% if hotel.contact_email %}
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-envelope text-primary"></i>
+                            <a href="mailto:{{ hotel.contact_email }}" class="small">{{ hotel.contact_email }}</a>
+                        </div>
+                    {% endif %}
+                    {% if hotel.contact_phone %}
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-telephone text-primary"></i>
+                            <span class="small">{{ hotel.contact_phone }}</span>
+                        </div>
+                    {% endif %}
+                    {% if hotel.website %}
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-globe text-primary"></i>
+                            <a href="{{ hotel.website }}" target="_blank" class="small">{{ hotel.website }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if related_hotels %}
+    <div class="container py-5">
+        <h3 class="fw-bold mb-4">
+            <i class="bi bi-building me-2"></i>More Hotels in {{ hotel.city }}
+        </h3>
+        <div class="row g-4">
+            {% for rel in related_hotels %}
+                <div class="col-lg-3 col-md-6">
+                    {% include 'hotels/components/hotel_card.html' with hotel=rel %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'hotels/js/script.js' %}"></script>
+<script src="{% static 'reviews/js/script.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+{% include 'maps/components/map_foot.html' %}
+{% endblock %}

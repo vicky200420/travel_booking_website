@@ -1,0 +1,24 @@
+{% load static %}
+{# Cinematic background — full-screen fixed ambient video layer.            #}
+{# Opt-in only on public pages via the cinematic_background block in base.  #}
+{# Behaviour wired in main.js (initCinematic):                              #}
+{#   · Desktop + motion allowed  ->  lazy-loads video on idle, autoplays    #}
+{#   · Mobile (no clip) / reduced-motion / JS-off  ->  poster frame only    #}
+{# No controls, aria-hidden, zero pointer events.                           #}
+<div class="cinematic-bg" data-cinematic-bg aria-hidden="true">
+    <div class="cinematic-bg__poster" role="presentation" style="background-image:url('{% static "images/travel-background-poster.jpg" %}');"></div>
+    <video
+        class="cinematic-bg__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        tabindex="-1"
+        data-cinematic-video
+        data-desktop-src="{% static "videos/travel-background.mp4" %}"
+    ></video>
+    <div class="cinematic-bg__overlay" role="presentation"></div>
+    <div class="cinematic-bg__vignette" role="presentation"></div>
+    <div class="cinematic-bg__glow" role="presentation"></div>
+</div>

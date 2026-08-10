@@ -1,0 +1,30 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#10060;{% endblock %}
+{% block hero_title %}Payment could not be completed{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+<div class="section">
+    <p class="section-title">Payment Details</p>
+    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="label" width="50%">Transaction ID</td>
+            <td class="value" width="50%">{{ transaction_id }}</td>
+        </tr>
+        <tr>
+            <td class="label">Gateway</td>
+            <td class="value">{{ gateway }}</td>
+        </tr>
+        <tr>
+            <td class="label">Amount</td>
+            <td class="value">{{ amount }}</td>
+        </tr>
+        <tr>
+            <td class="label">Booking</td>
+            <td class="value">{{ booking_id }}</td>
+        </tr>
+    </table>
+    <p style="text-align:center;margin:22px 0 0;font-size:13px;color:#64748b;">
+        Your booking is still on hold. Retry the payment or contact support if you need assistance.
+    </p>
+</div>
+{% endblock %}

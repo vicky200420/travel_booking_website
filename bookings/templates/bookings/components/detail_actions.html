@@ -1,0 +1,21 @@
+{% load static %}
+<div class="d-flex flex-wrap gap-2 justify-content-lg-end align-items-center">
+    <span class="status-pill status-{{ booking.status|lower }}">{{ booking.status }}</span>
+    <span class="status-pill payment-{{ booking.payment_status|lower }}">{{ booking.payment_status }}</span>
+    {% if booking.can_cancel %}
+        <form method="post" action="{% url 'booking_cancel' booking.booking_id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle me-2"></i>Cancel Booking
+            </button>
+        </form>
+    {% endif %}
+    {% if booking.payment_status == 'Pending' and booking.status != 'Cancelled' %}
+        <a href="{% url 'payment_checkout' %}?booking={{ booking.booking_id }}" class="btn btn-primary">
+            <i class="bi bi-credit-card me-2"></i>Pay Now
+        </a>
+    {% endif %}
+    <a href="{% url 'booking_download' booking.booking_id %}" class="btn btn-outline-primary">
+        <i class="bi bi-download me-2"></i>Download
+    </a>
+</div>

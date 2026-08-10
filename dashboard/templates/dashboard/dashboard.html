@@ -1,0 +1,151 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+
+<div class="dash-hero slide-up">
+    <div class="dash-hero-text">
+        <span class="dash-hero-eyebrow"><i class="bi bi-stars me-1"></i>Your travel hub</span>
+        <h2>Welcome back, {{ user.first_name|default:user.username }} <span class="dash-wave">👋</span></h2>
+        <p>Here's what's happening with your trips, payments and rewards.</p>
+    </div>
+    <a href="{% url 'dashboard_settings' %}" class="btn btn-gradient px-4"><i class="bi bi-person-gear me-2"></i>Manage Profile</a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="dash-profile-card glass-card">
+            <div class="dash-profile-cover">
+                <span class="dash-cover-badge"><i class="bi {{ dash_membership.icon }}"></i>{{ dash_membership.label }}</span>
+            </div>
+            <div class="dash-profile-avatar">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+                {% else %}
+                    <span>{{ user.username|first|upper }}</span>
+                {% endif %}
+            </div>
+            <div class="dash-profile-info">
+                <h5>{{ user.get_full_name|default:user.username }}</h5>
+                <span class="text-muted small"><i class="bi bi-envelope me-1"></i>{{ user.email }}</span>
+                <div class="dash-membership-row">
+                    <span class="badge dash-badge dash-badge-member">
+                        <i class="bi {{ dash_membership.icon }} me-1"></i>{{ dash_membership.label }} Member
+                    </span>
+                    <span class="badge dash-badge dash-badge-points"><i class="bi bi-stars me-1"></i>{{ dash_loyalty_points }} pts</span>
+                </div>
+            </div>
+            <div class="dash-profile-foot">
+                <span><i class="bi bi-calendar-check me-1"></i>Member since {{ user.date_joined|date:"M Y" }}</span>
+                {% if user.is_email_verified %}
+                <span class="text-success"><i class="bi bi-patch-check-fill me-1"></i>Verified</span>
+                {% else %}
+                <a href="{% url 'dashboard_settings' %}?tab=profile" class="text-warning"><i class="bi bi-patch-exclamation me-1"></i>Verify email</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="row g-3">
+            {% include 'dashboard/components/stats_card.html' with variant='primary' icon='bi-suitcase2-fill' label='Total Trips' value=dash_stats.total_trips %}
+            {% include 'dashboard/components/stats_card.html' with variant='success' icon='bi-calendar-check-fill' label='Upcoming Trips' value=dash_stats.upcoming_trips %}
+            {% include 'dashboard/components/stats_card.html' with variant='info' icon='bi-check2-circle' label='Completed Trips' value=dash_stats.completed_trips %}
+            {% include 'dashboard/components/stats_card.html' with variant='danger' icon='bi-x-circle-fill' label='Cancelled Trips' value=dash_stats.cancelled_trips %}
+            {% include 'dashboard/components/stats_card.html' with variant='violet' icon='bi-currency-rupee' label='Total Spent' value=dash_stats.total_spent|floatformat:0 suffix='₹' %}
+            {% include 'dashboard/components/stats_card.html' with variant='amber' icon='bi-stars' label='Reward Points' value=dash_stats.reward_points %}
+        </div>
+
+        <div class="dash-chart-card glass-card mt-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="dash-card-heading mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Spending Trend</h6>
+                <span class="badge dash-badge dash-badge-soft">Last 6 months</span>
+            </div>
+            <div class="dash-chart-wrap">
+                <canvas id="spendChart" data-labels='{{ spend_labels|safe }}' data-values='{{ spend_values|safe }}'></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="dash-section-head">
+            <h6 class="dash-card-heading"><i class="bi bi-calendar2-week me-2"></i>Upcoming Bookings</h6>
+            <a href="{% url 'dashboard_bookings' %}" class="dash-view-all">View all <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        {% if upcoming_bookings %}
+            <div class="dash-booking-list">
+                {% for booking in upcoming_bookings %}
+                    {% include 'dashboard/components/booking_card.html' with booking=booking %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dash-empty glass-card">
+                <i class="bi bi-calendar-plus"></i>
+                <h6>No upcoming trips</h6>
+                <p>Time to plan your next adventure. Your upcoming bookings will appear here.</p>
+                <a href="{% url 'package_list' %}" class="btn btn-gradient btn-sm"><i class="bi bi-compass me-1"></i>Explore packages</a>
+            </div>
+        {% endif %}
+
+        {% include 'dashboard/components/quick_actions.html' %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="dash-section-head">
+            <h6 class="dash-card-heading"><i class="bi bi-bell-fill me-2"></i>Notifications</h6>
+            <a href="{% url 'dashboard_notifications' %}" class="dash-view-all">View all</a>
+        </div>
+
+        <div class="dash-notif-list glass-card">
+            {% for n in recent_notifications %}
+            <a href="{% if n.action_url %}{{ n.action_url }}{% else %}{% url 'dashboard_notifications' %}{% endif %}"
+               class="dash-notif-item{% if not n.is_read %} unread{% endif %}"
+               data-notification-url="{% url 'notifications:notification_read' n.id %}"
+               data-action-url="{% if n.action_url %}{{ n.action_url }}{% else %}{% url 'dashboard_notifications' %}{% endif %}">
+                <span class="dash-notif-icon" style="color:{{ n.color }};background:{{ n.color }}1A;">
+                    <i class="bi {{ n.effective_icon }}"></i>
+                </span>
+                <span class="dash-notif-body">
+                    <strong>{{ n.title }}</strong>
+                    <span class="text-muted small">{{ n.message|truncatechars:60 }}</span>
+                    <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ n.created_at|timesince }} ago</small>
+                </span>
+                {% if not n.is_read %}<span class="dash-notif-dot"></span>{% endif %}
+            </a>
+            {% empty %}
+            <div class="dash-notif-empty">
+                <i class="bi bi-check2-all"></i>
+                <span>You're all caught up!</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="dash-section-head mt-4">
+            <h6 class="dash-card-heading"><i class="bi bi-receipt me-2"></i>Latest Payments</h6>
+            <a href="{% url 'dashboard_payments' %}" class="dash-view-all">View all</a>
+        </div>
+        <div class="dash-mini-list glass-card">
+            {% for p in latest_payments %}
+            <div class="dash-mini-row">
+                <span class="dash-mini-icon"><i class="bi bi-credit-card"></i></span>
+                <div class="flex-grow-1">
+                    <strong class="small d-block">₹{{ p.amount|floatformat:0 }}</strong>
+                    <small class="text-muted">{{ p.transaction_id|truncatechars:18 }}</small>
+                </div>
+                <span class="badge dash-badge badge-{{ p.status_color }}">{{ p.status }}</span>
+            </div>
+            {% empty %}
+            <div class="dash-notif-empty"><i class="bi bi-credit-card"></i><span>No payments yet.</span></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% if crumbs or page_label %}
+<nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house-door"></i></a></li>
+        {% if crumbs %}
+            {% for crumb in crumbs %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.label }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% if back_label %}
+                <li class="breadcrumb-item"><a href="{{ back_url }}">{{ back_label }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ page_label }}</li>
+        {% endif %}
+    </ol>
+</nav>
+{% endif %}

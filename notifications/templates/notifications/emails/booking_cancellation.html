@@ -1,0 +1,20 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#10060;{% endblock %}
+{% block hero_title %}Booking cancelled{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+{% include 'notifications/emails/_trip_summary.html' %}
+<div class="divider"></div>
+<div class="section">
+    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="label" width="50%">What happens next?</td>
+            <td class="value" width="50%">Refund processed within 5–7 business days</td>
+        </tr>
+        <tr>
+            <td class="label">Need help?</td>
+            <td class="value"><a href="mailto:{{ support_email }}">{{ support_email }}</a></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

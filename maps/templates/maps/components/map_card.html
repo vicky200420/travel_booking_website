@@ -1,0 +1,36 @@
+{% load static %}
+{% comment %}
+Reusable Leaflet map component.
+
+Usage:
+    {% include 'maps/components/map_card.html'
+         with map_id='hotel-location-map'
+              center_lat=hotel.latitude
+              center_lng=hotel.longitude
+              zoom=15
+              markers_json=hotel_marker_json
+              height='400px'
+              route=route_json  %}
+
+Params (all optional except map_id):
+  - map_id        unique id for the container (required)
+  - center_lat/lng  initial centre; falls back to the first marker
+  - zoom          initial zoom (default 13)
+  - markers_json  JSON array of marker objects (see maps/js/script.js)
+  - height        css height (default 380px)
+  - route         JSON {from:{name,lat,lng}, to:{name,lat,lng}} to draw a
+                  travel-route placeholder between the two points
+{% endcomment %}
+<div id="{{ map_id }}"
+     class="leaflet-map map-card"
+     data-center-lat="{{ center_lat|default:'' }}"
+     data-center-lng="{{ center_lng|default:'' }}"
+     data-zoom="{{ zoom|default:13 }}"
+     data-markers="{{ markers_json|default:'[]'|escape }}"
+     data-route="{{ route|default:''|escape }}"
+     data-height="{{ height|default:'380px' }}">
+    <div class="map-card-loading">
+        <span class="spinner-premium"></span>
+        <small>Loading map…</small>
+    </div>
+</div>

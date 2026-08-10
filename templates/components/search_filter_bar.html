@@ -1,0 +1,20 @@
+{% if filter_form %}
+<div class="filter-bar">
+    <form method="get" class="filter-bar-form" id="filter-bar">
+        <div class="filter-bar-grid">
+            {% for field in filter_form %}
+                <div class="filter-field">
+                    {% if field.label %}
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% endif %}
+                    {{ field }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="filter-bar-actions">
+            <button type="submit" class="btn btn-gradient btn-ripple"><span><i class="bi bi-funnel me-2"></i>Filter</span></button>
+            <a href="{{ clear_url|default:request.path }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise me-2"></i>Clear</a>
+        </div>
+    </form>
+</div>
+{% endif %}

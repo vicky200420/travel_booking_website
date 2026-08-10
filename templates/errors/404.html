@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found — TravelBooking{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="error-wrap anim-fade-up">
+        <div class="error-code">404</div>
+        <div class="error-icon">
+            <i class="bi bi-compass" aria-hidden="true"></i>
+        </div>
+        <span class="visually-hidden">Page not found</span>
+        <h1 class="error-title">Lost on this route?</h1>
+        <p class="error-desc">The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p>
+        <div class="error-actions">
+            <a href="{% url 'home' %}" class="btn btn-gradient"><i class="bi bi-house-door me-1" aria-hidden="true"></i>Back to Home</a>
+            <a href="{% url 'package_list' %}" class="btn btn-outline-primary"><i class="bi bi-compass me-1" aria-hidden="true"></i>Browse Packages</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

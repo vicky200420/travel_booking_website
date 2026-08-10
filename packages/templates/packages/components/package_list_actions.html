@@ -1,0 +1,13 @@
+{% load static %}
+<a href="{% url 'maps:destination_map' %}" class="btn btn-outline-primary btn-ripple">
+    <i class="bi bi-map me-1"></i>View on Map
+</a>
+<label class="form-label mb-0 text-nowrap small fw-medium ms-2">Sort:</label>
+<select class="form-select form-select-sm ms-2" id="sortSelect" style="width:auto;min-width:160px;">
+    <option value="" {% if form.sort_by.value == '' %}selected{% endif %}>Recommended</option>
+    <option value="price_low" {% if form.sort_by.value == 'price_low' %}selected{% endif %}>Lowest Price</option>
+    <option value="price_high" {% if form.sort_by.value == 'price_high' %}selected{% endif %}>Highest Price</option>
+    <option value="rating_high" {% if form.sort_by.value == 'rating_high' %}selected{% endif %}>Highest Rated</option>
+    <option value="most_popular" {% if form.sort_by.value == 'most_popular' %}selected{% endif %}>Most Popular</option>
+    <option value="newest" {% if form.sort_by.value == 'newest' %}selected{% endif %}>Newest</option>
+</select>

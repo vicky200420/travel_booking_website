@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile — TravelBooking{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="profile-cover">
+        <div class="profile-avatar-wrapper">
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile" class="avatar">
+            {% else %}
+                <div class="avatar-placeholder">{{ user.username|first|upper }}</div>
+            {% endif %}
+            <div class="profile-name">
+                <h3>{{ user.first_name|default:user.username }} {{ user.last_name }}</h3>
+                <span><i class="bi bi-geo-alt me-1"></i>{{ user.city|default:'Traveler' }}{% if user.country %}, {{ user.country }}{% endif %}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 g-lg-4 mb-4">
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card primary text-center">
+                <div class="stat-card-icon mx-auto"><i class="bi bi-check2-circle"></i></div>
+                <div class="stat-card-value">12</div>
+                <div class="stat-card-label">Trips Completed</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card success text-center">
+                <div class="stat-card-icon mx-auto"><i class="bi bi-calendar-check"></i></div>
+                <div class="stat-card-value">3</div>
+                <div class="stat-card-label">Upcoming Trips</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card warning text-center">
+                <div class="stat-card-icon mx-auto"><i class="bi bi-star"></i></div>
+                <div class="stat-card-value">28</div>
+                <div class="stat-card-label">Reviews</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="stat-card accent text-center">
+                <div class="stat-card-icon mx-auto"><i class="bi bi-gift"></i></div>
+                <div class="stat-card-value">2,450</div>
+                <div class="stat-card-label">Reward Points</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="profile-details">
+                <h5 class="fw-semibold mb-3"><i class="bi bi-person-badge me-2"></i>Account Information</h5>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">{{ user.email }}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-telephone"></i></div>
+                    <div>
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">{{ user.phone_number|default:'Not provided' }}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-calendar"></i></div>
+                    <div>
+                        <div class="detail-label">Date of Birth</div>
+                        <div class="detail-value">{{ user.date_of_birth|default:'Not provided' }}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <div class="detail-label">Address</div>
+                        <div class="detail-value">{{ user.address|default:'Not provided' }}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-building"></i></div>
+                    <div>
+                        <div class="detail-label">City / Country</div>
+                        <div class="detail-value">{{ user.city|default:'—' }}{% if user.city and user.country %}, {% endif %}{{ user.country|default:'—' }}</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="bi bi-tag"></i></div>
+                    <div>
+                        <div class="detail-label">Role</div>
+                        <div class="detail-value"><span class="badge bg-primary bg-opacity-10 text-primary">{{ user.get_role_display }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="profile-details">
+                <h5 class="fw-semibold mb-3"><i class="bi bi-gear me-2"></i>Quick Actions</h5>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-gradient py-3 btn-ripple"><span><i class="bi bi-pencil me-2"></i>Edit Profile</span></a>
+                    <a href="#" class="btn btn-outline-primary py-3"><i class="bi bi-shield-check me-2"></i>Security Settings</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary py-3"><i class="bi bi-grid-1x2 me-2"></i>Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

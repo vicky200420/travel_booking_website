@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} — TravelBooking{% endblock %}
+
+{% block body_class %}dash-body{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+
+    {% include 'components/sidebar.html' %}
+
+    <div class="dash-main">
+        {% include 'components/topbar.html' %}
+
+        <div class="dash-content">
+            {% block dash_content %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start dash-mobile-menu" tabindex="-1" id="dashSidebarOffcanvas" aria-label="Dashboard navigation">
+        {% include 'components/sidebar.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+{% endblock %}

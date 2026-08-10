@@ -1,0 +1,61 @@
+{% load static %}
+<footer class="footer-premium site-footer">
+    <div class="container">
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-4">
+                <h5 class="d-flex align-items-center"><i class="bi bi-airplane-engines me-2" aria-hidden="true"></i>TravelBooking</h5>
+                <p class="small mb-3 opacity-75">Discover amazing destinations and book your next adventure with ease. Compare flights, hotels and curated packages in one place.</p>
+                <div class="footer-social d-flex gap-2">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <h5>Explore</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'flights' %}">Flights</a></li>
+                    <li class="mb-2"><a href="{% url 'hotel_list' %}">Hotels</a></li>
+                    <li class="mb-2"><a href="{% url 'package_list' %}">Packages</a></li>
+                    <li class="mb-2"><a href="{% url 'maps:hotel_map' %}">Explore Map</a></li>
+                    <li class="mb-2"><a href="{% url 'maps:destination_map' %}">Destinations</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <h5>Support</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#">Help Center</a></li>
+                    <li class="mb-2"><a href="#">Cancellations</a></li>
+                    <li class="mb-2"><a href="#">Refund Policy</a></li>
+                    <li class="mb-2"><a href="#">Contact Us</a></li>
+                    <li class="mb-2"><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4">
+                <h5>Get travel deals</h5>
+                <p class="small mb-2 opacity-75">Join our newsletter for exclusive offers and travel inspiration.</p>
+                <form class="footer-newsletter d-flex gap-2" action="#" method="post">
+                    {% csrf_token %}
+                    <label class="visually-hidden" for="newsletter-email">Email address</label>
+                    <input type="email" id="newsletter-email" class="form-control" placeholder="you@email.com" required>
+                    <button type="submit" class="btn btn-gradient px-3" aria-label="Subscribe"><i class="bi bi-send" aria-hidden="true"></i></button>
+                </form>
+                <p class="small mt-3 mb-0 opacity-60">
+                    <i class="bi bi-shield-check me-1" aria-hidden="true"></i> Secure payments
+                    <span class="mx-2">·</span>
+                    <i class="bi bi-headset me-1" aria-hidden="true"></i> 24/7 support
+                </p>
+            </div>
+        </div>
+
+        <hr class="my-4 footer-divider">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+            <p class="small mb-0 opacity-75">&copy; {% now 'Y' %} {{ SITE_NAME }}. All rights reserved.</p>
+            <p class="small mb-0 opacity-75"><i class="bi bi-globe2 me-1" aria-hidden="true"></i> English (US) · INR</p>
+        </div>
+    </div>
+</footer>

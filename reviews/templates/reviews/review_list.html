@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Reviews | TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'reviews/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'booking_history' as booking_history_url %}
+{% include 'components/page_header.html' with page_icon='bi-star' page_title='My Reviews' page_subtitle='Your feedback for completed trips' page_label='My Reviews' page_actions_template='reviews/components/review_count_actions.html' %}
+
+<div class="page-section">
+    <div class="container">
+        {% if reviews %}
+            <div class="row g-4">
+                {% for review in reviews %}
+                    <div class="col-lg-6">
+                        {% include 'reviews/components/review_card.html' with show_actions=True %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+                {% include 'components/pagination.html' with page_obj=page_obj %}
+            {% endif %}
+        {% else %}
+            {% include 'components/empty_state.html' with icon='bi-chat-square-text' title='No Reviews Yet' description='Reviews from your completed bookings will appear here.' primary_url=booking_history_url primary_icon='bi-journal-bookmark' primary_label='View My Bookings' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'reviews/js/script.js' %}"></script>
+{% endblock %}

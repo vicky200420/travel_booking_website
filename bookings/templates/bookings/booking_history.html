@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookings — TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'bookings/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+
+{% url 'package_list' as packages_url %}
+{% url 'flights' as flights_url %}
+{% include 'components/page_header.html' with page_icon='bi-journal-bookmark' page_title='My Bookings' page_subtitle='View and manage all your travel bookings' page_label='Bookings' page_actions_template='bookings/components/history_actions.html' %}
+
+<div class="page-section">
+    <div class="container">
+        {% if bookings %}
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+                <a href="{% url 'booking_history' %}" class="btn btn-sm {% if not active_status %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill">All</a>
+                <a href="?status=Pending" class="btn btn-sm {% if active_status == 'Pending' %}btn-warning{% else %}btn-outline-secondary{% endif %} rounded-pill">Pending</a>
+                <a href="?status=Confirmed" class="btn btn-sm {% if active_status == 'Confirmed' %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill">Confirmed</a>
+                <a href="?status=Completed" class="btn btn-sm {% if active_status == 'Completed' %}btn-info{% else %}btn-outline-secondary{% endif %} rounded-pill">Completed</a>
+                <a href="?status=Cancelled" class="btn btn-sm {% if active_status == 'Cancelled' %}btn-danger{% else %}btn-outline-secondary{% endif %} rounded-pill">Cancelled</a>
+            </div>
+
+            {% for booking in bookings %}
+                {% include 'bookings/components/booking_card.html' %}
+            {% endfor %}
+
+            {% if page_obj.paginator.num_pages > 1 %}
+                {% include 'components/pagination.html' with page_obj=page_obj %}
+            {% endif %}
+        {% else %}
+            {% include 'components/empty_state.html' with icon='bi-journal-x' title='No Bookings Yet' description="You haven't made any bookings yet. Start exploring and plan your next adventure!" primary_url=packages_url primary_icon='bi-box-seam' primary_label='Explore Packages' secondary_url=flights_url secondary_icon='bi-airplane' secondary_label='Search Flights' %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'bookings/js/script.js' %}"></script>
+{% endblock %}

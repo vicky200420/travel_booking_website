@@ -1,0 +1,214 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-settings-layout">
+    <div class="dash-settings-nav glass-card">
+        <ul class="nav flex-column gap-1">
+            <li>
+                <a class="dash-settings-link{% if tab == 'profile' %} active{% endif %}" href="?tab=profile">
+                    <i class="bi bi-person-vcard"></i><span>Profile Information</span>
+                </a>
+            </li>
+            <li>
+                <a class="dash-settings-link{% if tab == 'picture' %} active{% endif %}" href="?tab=picture">
+                    <i class="bi bi-image"></i><span>Profile Picture</span>
+                </a>
+            </li>
+            <li>
+                <a class="dash-settings-link{% if tab == 'password' %} active{% endif %}" href="?tab=password">
+                    <i class="bi bi-shield-lock"></i><span>Change Password</span>
+                </a>
+            </li>
+            <li>
+                <a class="dash-settings-link{% if tab == 'travel' %} active{% endif %}" href="?tab=travel">
+                    <i class="bi bi-suitcase-lg"></i><span>Travel Preferences</span>
+                </a>
+            </li>
+            <li>
+                <a class="dash-settings-link{% if tab == 'notifications' %} active{% endif %}" href="?tab=notifications">
+                    <i class="bi bi-bell"></i><span>Notification Preferences</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="dash-settings-panel glass-card">
+        {% if tab == 'profile' %}
+        <div class="dash-settings-head">
+            <h6 class="dash-card-heading mb-0"><i class="bi bi-person-vcard me-2"></i>Profile Information</h6>
+            <span class="text-muted small">Update your personal details</span>
+        </div>
+        <form method="post" action="{% url 'dashboard_settings' %}?tab=profile" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="profile">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">First name</label>
+                    {{ profile_form.first_name }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Last name</label>
+                    {{ profile_form.last_name }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone number</label>
+                    {{ profile_form.phone_number }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Date of birth</label>
+                    {{ profile_form.date_of_birth }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Address</label>
+                    {{ profile_form.address }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">City</label>
+                    {{ profile_form.city }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Country</label>
+                    {{ profile_form.country }}
+                </div>
+            </div>
+            <div class="dash-settings-errors">{{ profile_form.errors }}</div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-gradient"><i class="bi bi-check2 me-2"></i>Save Changes</button>
+            </div>
+        </form>
+
+        {% elif tab == 'picture' %}
+        <div class="dash-settings-head">
+            <h6 class="dash-card-heading mb-0"><i class="bi bi-image me-2"></i>Profile Picture</h6>
+            <span class="text-muted small">A great photo helps people recognise you</span>
+        </div>
+        <form method="post" action="{% url 'dashboard_settings' %}?tab=picture" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="picture">
+            <div class="dash-picture-upload">
+                <div class="dash-picture-preview" id="picturePreview">
+                    {% if user.profile_image %}
+                        <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <span class="dash-picture-initial">{{ user.username|first|upper }}</span>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    {{ picture_form.profile_image }}
+                    <div class="form-text mt-2">JPG or PNG, up to 5MB. Your photo is shown in the sidebar and navbar.</div>
+                </div>
+            </div>
+            <div class="dash-settings-errors">{{ picture_form.errors }}</div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-gradient"><i class="bi bi-upload me-2"></i>Upload Photo</button>
+            </div>
+        </form>
+
+        {% elif tab == 'password' %}
+        <div class="dash-settings-head">
+            <h6 class="dash-card-heading mb-0"><i class="bi bi-shield-lock me-2"></i>Change Password</h6>
+            <span class="text-muted small">Use a strong, unique password</span>
+        </div>
+        <form method="post" action="{% url 'dashboard_settings' %}?tab=password" novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Current password</label>
+                    <div class="password-wrapper">
+                        {{ password_form.current_password }}
+                        <button type="button" class="toggle-password" tabindex="-1"><i class="bi bi-eye"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">New password</label>
+                    {{ password_form.new_password }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Confirm new password</label>
+                    {{ password_form.confirm_password }}
+                </div>
+            </div>
+            <div class="dash-settings-errors">{{ password_form.errors }}</div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-gradient"><i class="bi bi-key me-2"></i>Update Password</button>
+            </div>
+        </form>
+
+        {% elif tab == 'travel' %}
+        <div class="dash-settings-head">
+            <h6 class="dash-card-heading mb-0"><i class="bi bi-suitcase-lg me-2"></i>Travel Preferences</h6>
+            <span class="text-muted small">We use these to tailor recommendations for you</span>
+        </div>
+        <form method="post" action="{% url 'dashboard_settings' %}?tab=travel" novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Budget range</label>
+                    {{ travel_form.budget_range }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Seat preference</label>
+                    {{ travel_form.seat_preference }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Meal preference</label>
+                    {{ travel_form.meal_preference }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Preferred airlines</label>
+                    {{ travel_form.airline_preferences }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Frequent flyer number</label>
+                    {{ travel_form.frequent_flyer }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Special needs</label>
+                    {{ travel_form.special_needs }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Preferred hotel amenities</label>
+                    <div class="dash-check-grid">
+                        {% for checkbox in travel_form.hotel_amenities %}
+                        <label class="dash-check-item">
+                            {{ checkbox.tag }}
+                            <span>{{ checkbox.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="dash-settings-errors">{{ travel_form.errors }}</div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-gradient"><i class="bi bi-check2 me-2"></i>Save Preferences</button>
+            </div>
+        </form>
+
+        {% elif tab == 'notifications' %}
+        <div class="dash-settings-head">
+            <h6 class="dash-card-heading mb-0"><i class="bi bi-bell me-2"></i>Notification Preferences</h6>
+            <span class="text-muted small">Choose what you'd like to hear about</span>
+        </div>
+        <form method="post" action="{% url 'dashboard_settings' %}?tab=notifications" novalidate>
+            {% csrf_token %}
+            <div class="dash-notif-prefs">
+                {% for field in notif_form %}
+                <label class="dash-pref-row">
+                    <span>
+                        <strong>{{ field.label }}</strong>
+                        <small class="text-muted d-block">{{ field.help_text }}</small>
+                    </span>
+                    <span class="form-check form-switch mb-0">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}"></label></span>
+                </label>
+                {% endfor %}
+            </div>
+            <div class="dash-settings-errors">{{ notif_form.errors }}</div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-gradient"><i class="bi bi-check2 me-2"></i>Save Preferences</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

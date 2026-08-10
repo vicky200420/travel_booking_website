@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if mode == 'single' %}{{ package.destination }} Map — TravelBooking{% else %}Destination Map — TravelBooking{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+{% include 'maps/components/map_head.html' %}
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block cinematic_background %}{% include 'components/cinematic_background.html' %}{% endblock %}
+
+{% block content %}
+
+<div id="destinationMapPage" class="map-page" data-mode="{{ mode }}">
+    {% if mode == 'all' %}
+        {{ destinations|json_script:"maps-destinations" }}
+    {% else %}
+        {{ destinations|json_script:"maps-destinations" }}
+        {{ route|json_script:"maps-route" }}
+    {% endif %}
+
+    <aside class="map-side-panel glass-card" id="mapSidePanel">
+        <div class="map-panel-header">
+            <div class="d-flex align-items-center gap-2">
+                <span class="map-panel-logo"><i class="bi bi-compass"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-0">
+                        {% if mode == 'single' %}Destination{% else %}Destinations{% endif %}
+                    </h5>
+                    <small class="text-muted">
+                        {% if mode == 'single' %}{{ package.destination }}, {{ package.country }}{% else %}{{ destination_count }} travel destinations{% endif %}
+                    </small>
+                </div>
+            </div>
+            <button class="map-panel-toggle d-lg-none" id="mapPanelToggle" aria-label="Toggle panel">
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+        </div>
+
+        {% if mode == 'single' %}
+
+            <div class="map-destination-card">
+                <div class="map-destination-img">
+                    {% if package.cover_image %}
+                        <img src="{{ package.cover_image.url }}" alt="{{ package.title }}">
+                    {% else %}
+                        <i class="bi bi-image"></i>
+                    {% endif %}
+                </div>
+                <div class="p-3">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <h6 class="fw-bold mb-1">{{ package.title }}</h6>
+                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ package.destination }}, {{ package.country }}</small>
+                        </div>
+                        <span class="package-card-rating-badge">
+                            <span>{{ package.average_rating|floatformat:1 }}</span>
+                            <i class="bi bi-star-fill"></i>
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mt-2 small">
+                        <span><i class="bi bi-clock me-1"></i>{{ package.duration_display }}</span>
+                        <span><i class="bi bi-tag me-1"></i>${{ package.discounted_price|floatformat:0 }}</span>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="{% url 'package_detail' package.slug %}" class="btn btn-gradient btn-sm flex-fill">
+                            <span><i class="bi bi-eye me-1"></i>View Package</span>
+                        </a>
+                        <a href="{{ package.directions_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="bi bi-navigation me-1"></i>Navigate
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if route %}
+                <div class="map-route-card glass-card">
+                    <div class="map-route-header">
+                        <i class="bi bi-signpost-2 me-2"></i>Suggested Transfer Route
+                    </div>
+                    <div class="map-route-path">
+                        <div class="map-route-stop">
+                            <span class="map-route-dot"></span>
+                            <div>
+                                <strong class="d-block small">{{ route.from.name }}</strong>
+                                <small class="text-muted">Departure</small>
+                            </div>
+                        </div>
+                        <div class="map-route-line"><span></span></div>
+                        <div class="map-route-stop">
+                            <span class="map-route-dot accent"></span>
+                            <div>
+                                <strong class="d-block small">{{ route.to.name }}</strong>
+                                <small class="text-muted">Arrival</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3">
+                        <span class="map-route-distance"><i class="bi bi-signpost-split me-1"></i>~{{ route.distance_display }}</span>
+                        <a href="{{ route.directions_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-gradient">
+                            <span><i class="bi bi-navigation me-1"></i>Get Directions</span>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="map-panel-tabs">
+                <button class="map-tab active" data-tab="hotels"><i class="bi bi-camera me-1"></i>Attractions</button>
+                <button class="map-tab" data-tab="nearby"><i class="bi bi-compass me-1"></i>All Nearby</button>
+            </div>
+
+            <div class="map-panel-body">
+                <div class="map-tab-pane active" data-pane="hotels">
+                    {% if attractions %}
+                        <div class="map-nearby-list">
+                            {% for place in attractions %}
+                                <div class="map-nearby-item" data-lat="{{ place.lat }}" data-lng="{{ place.lng }}">
+                                    <span class="nearby-group-icon" style="background:{{ place.color }}18;color:{{ place.color }};">
+                                        <i class="bi {{ place.icon }}"></i>
+                                    </span>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="fw-semibold small text-truncate">{{ place.name }}</div>
+                                        <small class="text-muted"><i class="bi bi-signpost-split me-1"></i>~{{ place.distance_display }}</small>
+                                    </div>
+                                    <a href="{{ place.directions_url }}" target="_blank" rel="noopener" class="nearby-action" title="Directions"><i class="bi bi-navigation"></i></a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="map-nearby-placeholder">
+                            <i class="bi bi-camera"></i>
+                            <p class="small text-muted mb-0">No attractions on record for this destination.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="map-tab-pane" data-pane="nearby">
+                    {% if nearby_grouped %}
+                        <div class="map-nearby-grouped">
+                            {% for group in nearby_grouped %}
+                                <div class="mb-4">
+                                    <h6 class="fw-bold small mb-2" style="color:{{ group.color }};">
+                                        <i class="bi {{ group.icon }} me-1"></i>{{ group.label }}
+                                    </h6>
+                                    {% for place in group.places %}
+                                        <div class="map-nearby-item" data-lat="{{ place.lat }}" data-lng="{{ place.lng }}">
+                                            <span class="nearby-group-icon" style="background:{{ place.color }}18;color:{{ place.color }};">
+                                                <i class="bi {{ place.icon }}"></i>
+                                            </span>
+                                            <div class="flex-grow-1 min-w-0">
+                                                <div class="fw-semibold small text-truncate">{{ place.name }}</div>
+                                                <small class="text-muted"><i class="bi bi-signpost-split me-1"></i>~{{ place.distance_display }}</small>
+                                            </div>
+                                            <a href="{{ place.directions_url }}" target="_blank" rel="noopener" class="nearby-action" title="Directions"><i class="bi bi-navigation"></i></a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="map-nearby-placeholder">
+                            <i class="bi bi-compass"></i>
+                            <p class="small text-muted mb-0">No nearby places on record.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+
+            <div class="map-search glass-card">
+                <div class="map-search-field">
+                    <label class="form-label" for="destCountryFilter"><i class="bi bi-globe2 me-1"></i>Country</label>
+                    <select class="form-select form-select-sm" id="destCountryFilter">
+                        <option value="">All countries</option>
+                        {% for country, dests in country_groups.items %}
+                            <option value="{{ country }}">{{ country }} ({{ dests|length }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="map-search-field">
+                    <label class="form-label" for="destQueryFilter"><i class="bi bi-search me-1"></i>Search destination</label>
+                    <input type="text" class="form-control form-control-sm" id="destQueryFilter" placeholder="e.g. Tokyo, Bali…">
+                </div>
+            </div>
+
+            <div class="map-panel-body">
+                <div class="map-hotel-list" id="mapDestinationList"></div>
+                <div class="map-empty d-none" id="mapDestinationsEmpty">
+                    <i class="bi bi-compass"></i>
+                    <h6>No destinations match</h6>
+                    <p class="small text-muted">Try a different country or keyword.</p>
+                </div>
+            </div>
+
+        {% endif %}
+
+        <div class="map-panel-footer">
+            <a href="{% url 'package_list' %}" class="small"><i class="bi bi-arrow-left me-1"></i>Back to package listing</a>
+        </div>
+    </aside>
+
+    <div id="destinationMapCanvas" class="map-canvas">
+        <div class="map-loading-overlay">
+            <div class="map-loading-card glass-card">
+                <span class="spinner-premium"></span>
+                <p class="mb-0 mt-2 fw-semibold">Loading interactive map…</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% include 'maps/components/map_foot.html' %}
+{% endblock %}

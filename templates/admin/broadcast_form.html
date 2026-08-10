@@ -1,0 +1,31 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<div id="content-main" style="max-width:720px;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;">
+        <p style="margin:0 0 16px;color:#475569;font-size:0.9rem;">
+            Send a notification (and optional email) to every user matching the audience.
+            Promotional emails are not sent automatically — configure a marketing service to
+            layer on top of the in-app broadcast.
+        </p>
+        <form method="post" id="broadcast-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="margin-bottom:16px;">
+                <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a;" for="{{ field.id_for_label }}">
+                    {{ field.label }}{% if field.field.required %} <span style="color:#dc2626;">*</span>{% endif %}
+                </label>
+                {{ field.errors }}
+                <div style="width:100%;">{{ field }}</div>
+                {% if field.help_text %}<p style="font-size:0.8rem;color:#94a3b8;margin:4px 0 0;">{{ field.help_text }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <div style="display:flex;gap:12px;">
+                <button type="submit" class="button" style="background:linear-gradient(135deg,#2563EB,#06B6D4);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-weight:600;cursor:pointer;">
+                    Broadcast now
+                </button>
+                <a href="{% url 'admin:notifications_notification_changelist' %}" class="button" style="text-decoration:none;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

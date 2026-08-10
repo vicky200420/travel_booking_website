@@ -1,0 +1,40 @@
+{% load static %}
+<article class="dash-booking-card glass-card">
+    <div class="dash-booking-icon dash-booking-{{ booking.booking_type|lower }}">
+        {% if booking.booking_type == 'Flight' %}<i class="bi bi-airplane"></i>
+        {% elif booking.booking_type == 'Hotel' %}<i class="bi bi-building"></i>
+        {% else %}<i class="bi bi-box-seam"></i>{% endif %}
+    </div>
+
+    <div class="dash-booking-main">
+        <div class="dash-booking-head">
+            <div>
+                <h6 class="mb-0">{{ booking.title_display }}</h6>
+                <span class="dash-booking-dest"><i class="bi bi-geo-alt me-1"></i>{{ booking.destination_display }}</span>
+            </div>
+            <span class="badge dash-badge badge-{{ booking.status_color }}">{{ booking.status }}</span>
+        </div>
+        <div class="dash-booking-dates">
+            <span><i class="bi bi-calendar3 me-1"></i>{{ booking.travel_start_date|date:"M d, Y" }}</span>
+            <i class="bi bi-arrow-right"></i>
+            <span>{{ booking.travel_end_date|date:"M d, Y" }}</span>
+            <span class="dash-booking-pax"><i class="bi bi-people me-1"></i>{{ booking.total_travelers }}</span>
+        </div>
+        <div class="dash-booking-price">₹{{ booking.grand_total|floatformat:0 }} <small>total</small></div>
+    </div>
+
+    <div class="dash-booking-actions">
+        <a href="{% url 'booking_detail' booking.booking_id %}" class="btn btn-sm btn-outline-primary rounded-3">
+            <i class="bi bi-eye me-1"></i>View Details
+        </a>
+        {% if booking.can_cancel %}
+        <form method="post" action="{% url 'booking_cancel' booking.booking_id %}"
+              onsubmit="return confirm('Cancel booking {{ booking.booking_id }}? This cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger rounded-3">
+                <i class="bi bi-x-lg me-1"></i>Cancel
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</article>

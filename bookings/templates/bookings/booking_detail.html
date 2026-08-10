@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Booking {{ booking.booking_id }} — TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'bookings/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+
+{% url 'booking_history' as booking_history_url %}
+{% include 'components/page_header.html' with page_icon='bi-journal-bookmark' page_title=booking.booking_id page_subtitle=booking.title_display page_label='Bookings' back_label='My Bookings' back_url=booking_history_url page_actions_template='bookings/components/detail_actions.html' %}
+
+<div class="page-section">
+    <div class="container">
+        <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="glass-card p-4 p-lg-5 mb-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-info-circle me-2"></i>Booking Information</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-hash"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Booking ID</small>
+                                <span class="fw-bold font-monospace">{{ booking.booking_id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-tag"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Type</small>
+                                <span class="fw-semibold">{{ booking.booking_type }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-calendar-check"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Booked On</small>
+                                <span class="fw-semibold">{{ booking.booking_date|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-arrow-right-circle"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Status</small>
+                                <span class="badge bg-{{ booking.status_color }} bg-opacity-10 text-{{ booking.status_color }} px-3 py-2">{{ booking.status }}</span>
+                                <span class="badge bg-{{ booking.payment_color }} bg-opacity-10 text-{{ booking.payment_color }} px-3 py-2 ms-1">{{ booking.payment_status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 p-lg-5 mb-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-geo-alt me-2"></i>Travel Summary</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Destination</small>
+                                <span class="fw-semibold">{{ booking.destination_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-building"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Item</small>
+                                <span class="fw-semibold">{{ booking.title_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-calendar"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Travel Dates</small>
+                                <span class="fw-semibold">{{ booking.travel_start_date|date:"M d, Y" }} — {{ booking.travel_end_date|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-people"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Travelers</small>
+                                <span class="fw-semibold">
+                                    {{ booking.adults }} Adult{{ booking.adults|pluralize }}
+                                    {% if booking.children %} + {{ booking.children }} Child{{ booking.children|pluralize }}{% endif %}
+                                    {% if booking.infants %} + {{ booking.infants }} Infant{{ booking.infants|pluralize }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 p-lg-5 mb-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-person-badge me-2"></i>Contact Information</h4>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Name</small>
+                                <span class="fw-semibold">{{ booking.contact_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Email</small>
+                                <span class="fw-semibold">{{ booking.contact_email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="bi bi-telephone"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Phone</small>
+                                <span class="fw-semibold">{{ booking.contact_phone }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if booking.special_requests %}
+                        <div class="col-12">
+                            <div class="detail-item">
+                                <div class="detail-icon"><i class="bi bi-chat-dots"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Special Requests</small>
+                                    <span>{{ booking.special_requests }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="glass-card p-4 p-lg-5">
+                <h4 class="fw-bold mb-4"><i class="bi bi-clock-history me-2"></i>Booking Timeline</h4>
+                <div class="booking-timeline">
+                    <div class="timeline-item active">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">{{ booking.booking_date|date:"M d, Y H:i" }}</span>
+                            <h6 class="fw-bold mb-1">Booking Created</h6>
+                            <p class="text-muted small mb-0">Booking {{ booking.booking_id }} was initiated</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item {% if booking.status != 'Pending' %}active{% endif %}">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">{{ booking.updated_at|date:"M d, Y H:i" }}</span>
+                            <h6 class="fw-bold mb-1">
+                                {% if booking.status == 'Pending' %}Awaiting Confirmation
+                                {% elif booking.status == 'Confirmed' %}Booking Confirmed
+                                {% elif booking.status == 'Cancelled' %}Booking Cancelled
+                                {% elif booking.status == 'Completed' %}Travel Completed
+                                {% else %}{{ booking.status }}{% endif %}
+                            </h6>
+                            <p class="text-muted small mb-0">
+                                {% if booking.status == 'Pending' %}Waiting for payment confirmation
+                                {% elif booking.status == 'Confirmed' %}Your booking has been confirmed
+                                {% elif booking.status == 'Cancelled' %}This booking has been cancelled
+                                {% elif booking.status == 'Completed' %}Travel has been completed
+                                {% else %}{{ booking.status }}{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item {% if booking.status == 'Completed' or booking.status == 'Refunded' %}active{% endif %}">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h6 class="fw-bold mb-1">
+                                {% if booking.status == 'Completed' %}Travel Completed
+                                {% elif booking.status == 'Refunded' %}Refund Processed
+                                {% else %}Travel Date{% endif %}
+                            </h6>
+                            <p class="text-muted small mb-0">{{ booking.travel_end_date|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-lg-top" style="top:100px;">
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-calculator me-2"></i>Price Breakdown
+                    </h5>
+
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span class="text-muted">Base Price</span>
+                            <span class="fw-medium">${{ booking.base_price|floatformat:2 }}</span>
+                        </div>
+                        {% if booking.discount > 0 %}
+                            <div class="price-row text-success">
+                                <span>Discount</span>
+                                <span>-${{ booking.discount|floatformat:2 }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="price-row">
+                            <span class="text-muted">Taxes</span>
+                            <span class="fw-medium">${{ booking.taxes|floatformat:2 }}</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="text-muted">Service Fee</span>
+                            <span class="fw-medium">${{ booking.service_fee|floatformat:2 }}</span>
+                        </div>
+                        <hr>
+                        <div class="price-row grand-total">
+                            <span class="fw-bold fs-5">Total</span>
+                            <span class="fw-bold fs-5" style="color:var(--primary);">${{ booking.grand_total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>Support</h5>
+                    <p class="small text-muted mb-3">Need help with your booking?</p>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-envelope text-primary"></i>
+                        <span class="small">support@travelbooking.com</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-telephone text-primary"></i>
+                        <span class="small">+1 (800) 123-4567</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'bookings/js/script.js' %}"></script>
+{% endblock %}

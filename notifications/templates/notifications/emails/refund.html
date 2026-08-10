@@ -1,0 +1,34 @@
+{% extends 'notifications/emails/email_base.html' %}
+{% block hero_icon %}&#128176;{% endblock %}
+{% block hero_title %}Refund processed{% endblock %}
+{% block hero_message %}{{ message }}{% endblock %}
+{% block content %}
+<div class="section">
+    <p class="section-title">Refund Summary</p>
+    <table role="presentation" class="summary-table" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="label" width="50%">Booking</td>
+            <td class="value" width="50%">{{ booking_id }}</td>
+        </tr>
+        <tr>
+            <td class="label">Transaction</td>
+            <td class="value">{{ transaction_id }}</td>
+        </tr>
+        <tr>
+            <td class="label">Refund Amount</td>
+            <td class="value">{{ amount }}</td>
+        </tr>
+        <tr>
+            <td class="label">Method</td>
+            <td class="value">{{ gateway }} · {{ payment_method }}</td>
+        </tr>
+        <tr>
+            <td class="label">Processed</td>
+            <td class="value">{{ paid_at|date:'M d, Y H:i' }}</td>
+        </tr>
+    </table>
+    <p style="text-align:center;margin:22px 0 0;font-size:13px;color:#64748b;">
+        The amount will reflect in your account within 5–7 business days depending on your bank.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% load static %}
+<div class="review-card glass-card p-4 h-100">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,{% if review.user == request.user %}#2563EB,#7C3AED{% else %}#E0E7FF,#C7D2FE{% endif %});display:flex;align-items:center;justify-content:center;font-weight:700;color:{% if review.user == request.user %}#fff{% else %}#4F46E5{% endif %};font-size:0.95rem;">
+                {{ review.user.username|first|upper }}
+            </div>
+            <div>
+                <span class="fw-bold d-block lh-1" style="font-size:0.9rem;">{{ review.user.username }}</span>
+                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+        </div>
+        <div class="text-end">
+            <div class="d-flex align-items-center gap-1" style="color:#F59E0B;font-size:0.9rem;">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= review.rating %}
+                        <i class="bi bi-star-fill"></i>
+                    {% else %}
+                        <i class="bi bi-star"></i>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <small class="text-muted">{{ review.rating }}/5</small>
+        </div>
+    </div>
+
+    <div class="mb-2">
+        {% if review.is_verified_booking %}
+            <span class="badge" style="background:#2563EB15;color:#2563EB;font-size:0.7rem;font-weight:600;">
+                <i class="bi bi-patch-check-fill me-1"></i>Verified Booking
+            </span>
+        {% endif %}
+        {% if not review.is_approved %}
+            <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size:0.7rem;">Pending Review</span>
+        {% endif %}
+    </div>
+
+    <h6 class="fw-bold mb-2">{{ review.title }}</h6>
+    <p class="review-text text-muted small mb-3">{{ review.review_text|linebreaksbr }}</p>
+
+    {% if review.images.all %}
+        <div class="review-images d-flex gap-2 flex-wrap mb-3">
+            {% for img in review.images.all %}
+                <a href="{{ img.image.url }}" target="_blank" class="review-image-link">
+                    <img src="{{ img.image.url }}" alt="Review photo" class="review-image-thumb" loading="lazy">
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+        <button class="btn btn-sm helpful-btn {% if review.id in helpful_review_ids %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+                data-review-id="{{ review.id }}">
+            <i class="bi {% if review.id in helpful_review_ids %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-1"></i>
+            Helpful (<span class="helpful-count">{{ review.helpful_count }}</span>)
+        </button>
+
+        {% if show_actions and review.user == request.user %}
+            <div class="d-flex gap-1">
+                <a href="{% url 'review_edit' review.id %}" class="btn btn-sm btn-outline-primary" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'review_delete' review.id %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>

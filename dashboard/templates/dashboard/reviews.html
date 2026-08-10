@@ -1,0 +1,46 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-section-head">
+    <div>
+        <h6 class="dash-card-heading mb-1"><i class="bi bi-star-fill me-2"></i>My Reviews</h6>
+        <span class="text-muted small">{{ page_obj.paginator.count }} review{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+</div>
+
+<div class="dash-review-list">
+    {% for review in reviews %}
+    <article class="dash-review-card glass-card">
+        <div class="dash-review-top">
+            <span class="dash-review-type badge dash-badge dash-badge-soft">{{ review.content_type }}</span>
+            <span class="dash-review-rating">
+                {% for i in "12345" %}
+                <i class="bi {% if forloop.counter <= review.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                {% endfor %}
+            </span>
+        </div>
+        <h6 class="mb-1">{{ review.item_name }}</h6>
+        <strong class="d-block mb-1">{{ review.title }}</strong>
+        <p class="text-muted small mb-2">{{ review.review_text|truncatechars:180 }}</p>
+        <div class="dash-review-foot">
+            <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ review.created_at|date:"M d, Y" }}</small>
+            <div class="d-flex gap-2">
+                <a href="{% url 'review_edit' review.pk %}" class="btn btn-sm btn-light rounded-3"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <a href="{% url 'review_delete' review.pk %}" class="btn btn-sm btn-light text-danger rounded-3"><i class="bi bi-trash3 me-1"></i>Delete</a>
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="dash-empty glass-card">
+        <i class="bi bi-star"></i>
+        <h6>No reviews yet</h6>
+        <p>After you complete a trip, you can leave a review and help other travellers.</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+    {% include 'components/pagination.html' with page_obj=page_obj %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful — {{ booking.booking_id }} | TravelBooking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'payments/css/style.css' %}">
+{% endblock %}
+
+{% block main_class %}pt-5{% endblock %}
+
+{% block content %}
+<div class="pay-page">
+    <div class="container">
+        <div class="pay-glass pay-confirm-card p-4 p-lg-5 text-center pay-animate">
+
+            <div class="pay-success-ring">
+                <div class="pay-success-check"><i class="bi bi-check-lg"></i></div>
+            </div>
+
+            <h3 class="fw-bold mb-2">Payment Successful!</h3>
+            <p class="text-muted mb-4">
+                Your payment has been verified and <strong>Booking {{ booking.booking_id }}</strong> is now confirmed.
+                A receipt and confirmation email are on their way.
+            </p>
+
+            <div class="pay-detail-list text-start mb-4 pay-animate-1">
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Booking ID</span>
+                    <span class="pay-detail-value">{{ booking.booking_id }}</span>
+                </div>
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Transaction ID</span>
+                    <span class="pay-detail-value">{{ payment.transaction_id }}</span>
+                </div>
+                {% if payment.payment_id %}
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Payment ID</span>
+                    <span class="pay-detail-value">{{ payment.payment_id }}</span>
+                </div>
+                {% endif %}
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Amount Paid</span>
+                    <span class="pay-detail-value" style="color:var(--success-dark);">{{ currency_symbol }}{{ payment.amount|floatformat:2 }}</span>
+                </div>
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Method</span>
+                    <span class="pay-detail-value">{{ payment.payment_method|default:"Online" }}</span>
+                </div>
+                <div class="pay-detail">
+                    <span class="pay-detail-label">Paid On</span>
+                    <span class="pay-detail-value">{{ payment.paid_at|date:"d M Y, H:i" }}</span>
+                </div>
+            </div>
+
+            <div class="pay-actions pay-animate-2">
+                <a href="{% url 'payment_invoice' payment.id %}" class="btn btn-gradient btn-ripple">
+                    <span><i class="bi bi-download me-2"></i>Download Invoice</span>
+                </a>
+                <a href="{{ dashboard_url }}" class="btn btn-outline-primary">
+                    <i class="bi bi-speedometer2 me-2"></i>Go To Dashboard
+                </a>
+                <a href="{% url 'booking_detail' booking.booking_id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-ticket-detailed me-2"></i>View Booking
+                </a>
+            </div>
+
+            <div class="pay-secure mt-4 mb-0">
+                <i class="bi bi-shield-check-fill"></i>
+                <span>Payment verified securely with Razorpay</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

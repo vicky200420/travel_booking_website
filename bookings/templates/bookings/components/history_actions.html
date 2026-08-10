@@ -1,0 +1,5 @@
+{% load static %}
+<form method="get" class="d-flex gap-2">
+    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search booking ID..." value="{{ request.GET.search }}">
+    <button type="submit" class="btn btn-gradient btn-sm btn-ripple"><span><i class="bi bi-search"></i></span></button>
+</form>
