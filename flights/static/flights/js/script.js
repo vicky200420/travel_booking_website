@@ -65,6 +65,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // ─── Demo Cards (preview only, not bookable) ───
+  document.querySelectorAll('.demo-details-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      showToast('This is a sample flight and is not bookable yet.', 'info');
+    });
+  });
+
+  document.querySelectorAll('.demo-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('.fav-btn') || e.target.closest('.btn')) {
+        return;
+      }
+      showToast('Sample flight preview - booking opens when live flights are available.', 'info');
+    });
+  });
+
   // ─── Price Range Slider ───
   var priceRange = document.getElementById('priceRange');
   var priceDisplay = document.getElementById('priceDisplay');

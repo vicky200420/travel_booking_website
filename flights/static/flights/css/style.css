@@ -186,6 +186,36 @@
   background: rgba(37,99,235,0.1) !important;
 }
 
+/* ─── Demo Cards ─── */
+
+.demo-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.demo-card {
+  border-style: dashed;
+}
+
+.demo-card:hover {
+  border-style: dashed;
+}
+
+.demo-card .btn-gradient:disabled {
+  background: linear-gradient(135deg, #64748B, #475569);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 /* ─── Pagination ─── */
 
 .pagination {
@@ -318,5 +348,9 @@
   }
   .flight-card .fs-4 {
     font-size: 1.1rem !important;
+  }
+  .demo-card .border-top {
+    flex-wrap: wrap;
+    gap: 10px;
   }
 }

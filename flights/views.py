@@ -2,8 +2,20 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.views.generic import DetailView, FormView, ListView
 
+from .demo_flights import DEMO_FLIGHTS
 from .forms import FlightSearchForm
 from .models import Flight
+
+
+def demo_flights_context():
+    if Flight.objects.filter(status__in=['scheduled', 'delayed']).exists():
+        return {}
+    return {
+        'demo_flights': DEMO_FLIGHTS,
+        'showing_demo': True,
+        'results_title': 'Sample fares are ready to preview',
+        'results_subtitle': 'Real flights will appear here as soon as they are available.',
+    }
 
 
 class FlightSearchView(FormView):
@@ -83,20 +95,29 @@ class FlightSearchView(FormView):
         if departure_date:
             route += f' · {departure_date}'
         context['results_subtitle'] = route or 'Matching flights'
+        context.update(demo_flights_context())
         return self.render_to_response(context)
 
     def form_invalid(self, form):
-        return self.render_to_response(
-            self.get_context_data(form=form, flight_list=Paginator(Flight.objects.none(), self.paginate_by).get_page(1), search_performed=False)
+        context = self.get_context_data(
+            form=form,
+            flight_list=Paginator(Flight.objects.none(), self.paginate_by).get_page(1),
+            search_performed=False,
         )
+        context.update(demo_flights_context())
+        return self.render_to_response(context)
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(data=request.GET)
         if form.is_valid():
             return self.form_valid(form)
-        return self.render_to_response(
-            self.get_context_data(form=form, flight_list=Paginator(Flight.objects.none(), self.paginate_by).get_page(1), search_performed=False)
+        context = self.get_context_data(
+            form=form,
+            flight_list=Paginator(Flight.objects.none(), self.paginate_by).get_page(1),
+            search_performed=False,
         )
+        context.update(demo_flights_context())
+        return self.render_to_response(context)
 
 
 class FlightDetailView(DetailView):
@@ -119,3 +140,9 @@ class FlightListView(ListView):
         return Flight.objects.filter(status__in=['scheduled', 'delayed']).order_by(
             '-departure_date', 'departure_time'
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if not context['flight_list']:
+            context.update(demo_flights_context())
+        return context

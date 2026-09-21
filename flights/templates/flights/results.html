@@ -25,20 +25,45 @@
 
 <div class="page-section">
     <div class="container">
-        <div class="row g-4" id="flightResults">
-            {% for flight in flight_list %}
-                <div class="col-lg-4 col-md-6">
-                    {% include 'flights/components/flight_card.html' %}
+        {% if flight_list %}
+            <div class="row g-4" id="flightResults">
+                {% for flight in flight_list %}
+                    <div class="col-lg-4 col-md-6">
+                        {% include 'flights/components/flight_card.html' %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+                {% include 'components/pagination.html' with page_obj=page_obj %}
+            {% endif %}
+        {% elif showing_demo %}
+            <div class="row g-4" id="flightResults">
+                <div class="col-12">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                        <div>
+                            <span class="page-eyebrow">Flights</span>
+                            <h2 class="fw-bold mb-1"><i class="bi bi-airplane me-2"></i>Sample Fares</h2>
+                            <p class="text-muted mb-0">Real flights will appear here as soon as they are available.</p>
+                        </div>
+                        <span class="demo-badge"><i class="bi bi-info-circle me-1"></i>Demo Preview</span>
+                    </div>
                 </div>
-            {% empty %}
+                {% for flight in demo_flights %}
+                    <div class="col-lg-4 col-md-6">
+                        {% include 'flights/components/demo_flight_card.html' %}
+                    </div>
+                {% endfor %}
+                <div class="col-12">
+                    <p class="text-center text-muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>These are sample fares for preview and are not bookable yet. Bookings will open once live flights are added.</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="row g-4" id="flightResults">
                 <div class="col-12">
                     {% include 'components/empty_state.html' with icon='bi-cloud-sun' title='No flights available' description='There are no flights scheduled at the moment.' primary_url=flight_search_url primary_icon='bi-search' primary_label='Search Again' %}
                 </div>
-            {% endfor %}
-        </div>
-
-        {% if is_paginated %}
-            {% include 'components/pagination.html' with page_obj=page_obj %}
+            </div>
         {% endif %}
     </div>
 </div>

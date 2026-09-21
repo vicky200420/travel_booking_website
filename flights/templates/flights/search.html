@@ -24,28 +24,39 @@
 {% include 'flights/components/search_form.html' %}
 
 <div class="page-section">
-    {% if search_performed %}
-        {% if flight_list %}
-            {% include 'components/page_header.html' with page_icon='bi-airplane' page_title=results_title page_subtitle=results_subtitle page_label='Flights' page_actions_template='flights/components/search_results_actions.html' %}
+    {% if flight_list %}
+        {% include 'components/page_header.html' with page_icon='bi-airplane' page_title=results_title page_subtitle=results_subtitle page_label='Flights' page_actions_template='flights/components/search_results_actions.html' %}
 
-            <div class="container">
-                <div class="row g-4" id="flightResults">
-                    {% for flight in flight_list %}
-                        <div class="col-lg-4 col-md-6">
-                            {% include 'flights/components/flight_card.html' %}
-                        </div>
-                    {% endfor %}
-                </div>
+        <div class="container">
+            <div class="row g-4" id="flightResults">
+                {% for flight in flight_list %}
+                    <div class="col-lg-4 col-md-6">
+                        {% include 'flights/components/flight_card.html' %}
+                    </div>
+                {% endfor %}
+            </div>
 
-                {% if flight_list.paginator.num_pages > 1 %}
-                    {% include 'components/pagination.html' with page_obj=flight_list %}
-                {% endif %}
+            {% if flight_list.paginator.num_pages > 1 %}
+                {% include 'components/pagination.html' with page_obj=flight_list %}
+            {% endif %}
+        </div>
+    {% elif showing_demo %}
+        {% include 'components/page_header.html' with page_icon='bi-airplane' page_title=results_title page_subtitle=results_subtitle page_label='Flights' %}
+
+        <div class="container">
+            <div class="row g-4" id="flightResults">
+                {% for flight in demo_flights %}
+                    <div class="col-lg-4 col-md-6">
+                        {% include 'flights/components/demo_flight_card.html' %}
+                    </div>
+                {% endfor %}
             </div>
-        {% else %}
-            <div class="container">
-                {% include 'components/empty_state.html' with icon='bi-cloud-sun' title='No flights found' description='Try adjusting your search filters or choose different dates.' primary_url=flight_search_url primary_icon='bi-search' primary_label='Search Again' %}
-            </div>
-        {% endif %}
+            <p class="text-center text-muted small mt-4"><i class="bi bi-info-circle me-1"></i>These are sample fares for preview and are not bookable yet. Real flights will appear here automatically.</p>
+        </div>
+    {% elif search_performed %}
+        <div class="container">
+            {% include 'components/empty_state.html' with icon='bi-cloud-sun' title='No flights found' description='Try adjusting your search filters or choose different dates.' primary_url=flight_search_url primary_icon='bi-search' primary_label='Search Again' %}
+        </div>
     {% endif %}
 </div>
 {% endblock %}
