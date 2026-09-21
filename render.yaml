@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: travel-booking
+    runtime: python
+    plan: free
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn travel_booking.wsgi:application --bind 0.0.0.0:8000
+    healthCheckPath: /health/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: travel-booking.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://travel-booking.onrender.com
