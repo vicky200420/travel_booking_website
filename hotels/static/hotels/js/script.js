@@ -48,10 +48,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ─── Loading Skeleton ───
+  // ─── Loading Skeleton + Fallback ───
   var resultsContainer = document.getElementById('hotelResults');
   if (resultsContainer && resultsContainer.children.length === 0) {
     showSkeletons(6);
+
+    // Ensure the placeholder never persists forever. If real content has
+    // not replaced the skeletons after a timeout, show a friendly error
+    // message with a retry action instead of an infinite loader.
+    setTimeout(function () {
+      var container = document.getElementById('hotelResults');
+      if (!container) return;
+      var stillLoading = container.querySelectorAll('.skeleton-card').length > 0;
+      var hasContent = container.querySelector('.hotel-card, .empty-state');
+      if (stillLoading && !hasContent) {
+        container.innerHTML = '';
+        var col = document.createElement('div');
+        col.className = 'col-12';
+
+        var icon = document.createElement('div');
+        icon.className = 'empty-state-icon';
+        icon.innerHTML = '<i class="bi bi-wifi-off"></i>';
+
+        var title = document.createElement('h3');
+        title.className = 'empty-state-title';
+        title.textContent = 'Something went wrong';
+
+        var desc = document.createElement('p');
+        desc.className = 'empty-state-desc';
+        desc.textContent = 'We could not load hotels at the moment. Please try again.';
+
+        var actions = document.createElement('div');
+        actions.className = 'empty-state-actions';
+        actions.innerHTML =
+          '<button type="button" class="btn btn-gradient btn-ripple" onclick="window.location.reload()">' +
+            '<span><i class="bi bi-arrow-clockwise me-2"></i>Try Again</span>' +
+          '</button>';
+
+        col.appendChild(icon);
+        col.appendChild(title);
+        col.appendChild(desc);
+        col.appendChild(actions);
+        container.appendChild(col);
+      }
+    }, 8000);
   }
 
   function showSkeletons(count) {

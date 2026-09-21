@@ -40,24 +40,24 @@
             </div>
 
             <div class="col-lg-9">
-                {% if search_performed or package_list %}
-                    <div class="row g-4" id="packageResults">
-                        {% for package in package_list %}
-                            <div class="col-xl-4 col-md-6">
-                                {% include 'packages/components/package_card.html' %}
-                            </div>
-                        {% empty %}
-                            <div class="col-12">
-                                {% include 'components/empty_state.html' with icon='bi-box-seam' title='No Holiday Packages Available' description="We couldn't find any packages matching your criteria. Try adjusting your filters." primary_url=package_list_url primary_icon='bi-compass' primary_label='Explore More Destinations' %}
-                            </div>
-                        {% endfor %}
-                    </div>
+                <div class="row g-4" id="packageResults">
+                    {% for package in package_list %}
+                        <div class="col-xl-4 col-md-6">
+                            {% include 'packages/components/package_card.html' %}
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            {% if search_performed %}
+                                {% include 'components/empty_state.html' with icon='bi-box-seam' title='No Holiday Packages Found' description="We couldn't find any packages matching your criteria. Try adjusting your filters." primary_url=package_list_url primary_icon='bi-search' primary_label='Search Again' %}
+                            {% else %}
+                                {% include 'components/empty_state.html' with icon='bi-box-seam' title='No Holiday Packages Available' description='We are currently curating new holiday packages. Please check back soon.' primary_url='/' primary_icon='bi-house-door' primary_label='Visit Homepage' %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
 
-                    {% if is_paginated or package_list.paginator.num_pages > 1 %}
-                        {% include 'components/pagination.html' with page_obj=package_list %}
-                    {% endif %}
-                {% else %}
-                    <div class="row g-4" id="packageResults"></div>
+                {% if is_paginated %}
+                    {% include 'components/pagination.html' with page_obj=page_obj %}
                 {% endif %}
             </div>
         </div>

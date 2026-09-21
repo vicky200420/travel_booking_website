@@ -40,24 +40,24 @@
             </div>
 
             <div class="col-lg-9">
-                {% if search_performed or hotel_list %}
-                    <div class="row g-4" id="hotelResults">
-                        {% for hotel in hotel_list %}
-                            <div class="col-xl-4 col-md-6">
-                                {% include 'hotels/components/hotel_card.html' %}
-                            </div>
-                        {% empty %}
-                            <div class="col-12">
+                <div class="row g-4" id="hotelResults">
+                    {% for hotel in hotel_list %}
+                        <div class="col-xl-4 col-md-6">
+                            {% include 'hotels/components/hotel_card.html' %}
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            {% if search_performed %}
                                 {% include 'components/empty_state.html' with icon='bi-building-slash' title='No Hotels Found' description="We couldn't find any hotels matching your criteria. Try adjusting your filters." primary_url=hotel_list_url primary_icon='bi-search' primary_label='Search Again' %}
-                            </div>
-                        {% endfor %}
-                    </div>
+                            {% else %}
+                                {% include 'components/empty_state.html' with icon='bi-building' title='No Hotels Available' description='We are currently adding new hotels. Please check back soon.' primary_url='/' primary_icon='bi-house-door' primary_label='Visit Homepage' %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
 
-                    {% if is_paginated or hotel_list.paginator.num_pages > 1 %}
-                        {% include 'components/pagination.html' with page_obj=hotel_list %}
-                    {% endif %}
-                {% else %}
-                    <div class="row g-4" id="hotelResults"></div>
+                {% if is_paginated %}
+                    {% include 'components/pagination.html' with page_obj=page_obj %}
                 {% endif %}
             </div>
         </div>
