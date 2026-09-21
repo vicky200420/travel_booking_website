@@ -51,6 +51,8 @@ coverage.xml
 *.sqlite3-journal
 db.sqlite3
 db.sqlite3-journal
+# Cross-process migration lock created at app startup (see travel_booking/wsgi.py).
+.migrate.lock
 staticfiles/
 # media/ contains user-uploaded files (images, videos) — keep out of git.
 media/
