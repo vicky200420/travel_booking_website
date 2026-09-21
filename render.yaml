@@ -13,6 +13,6 @@ services:
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: travel-booking.onrender.com
+        value: travel-booking-website-1.onrender.com
       - key: CSRF_TRUSTED_ORIGINS
-        value: https://travel-booking.onrender.com
+        value: https://travel-booking-website-1.onrender.com
