@@ -209,9 +209,17 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-if not DEBUG:
-    # Compressed (non-fingerprinting) so manifest.json/sw.js keep stable URLs.
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Django 6 ignores the legacy STATICFILES_STORAGE setting, so the WhiteNoise
+# storage backend must be registered via STORAGES. Compressed (non-fingerprinting)
+# so manifest.json/sw.js keep stable URLs.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
